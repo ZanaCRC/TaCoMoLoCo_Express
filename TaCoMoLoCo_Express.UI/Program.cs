@@ -6,7 +6,10 @@ builder.Services.AddControllersWithViews();
 // Accede a la cadena de conexión
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
+
 var app = builder.Build();
+app.Urls.Add("http://192.168.56.101:5000");
+app.Urls.Add("http://127.0.0.1:5000");
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
