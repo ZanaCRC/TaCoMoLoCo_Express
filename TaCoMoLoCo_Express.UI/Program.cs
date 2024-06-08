@@ -1,3 +1,5 @@
+using Npgsql;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,7 +7,7 @@ builder.Services.AddControllersWithViews();
 
 // Accede a la cadena de conexión
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
+builder.Services.AddScoped<NpgsqlConnection>(sp => new NpgsqlConnection(connectionString));
 
 var app = builder.Build();
 app.Urls.Add("http://192.168.56.101:5000");

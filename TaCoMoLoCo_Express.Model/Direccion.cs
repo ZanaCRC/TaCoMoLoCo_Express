@@ -10,9 +10,6 @@ namespace TaCoMoLoCo_Express.Model
     public class Direccion
     {
         public int Id { get; set; }
-        [ForeignKey("Pais")]
-        public int IdPais { get; set; }
-        public Pais Pais { get; set; }
 
         [ForeignKey("Provincia")]
         public int IdProvincia { get; set; }
