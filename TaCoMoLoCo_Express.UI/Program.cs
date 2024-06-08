@@ -5,13 +5,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// Accede a la cadena de conexión
+// Accede a la cadena de conexiï¿½n
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddScoped<NpgsqlConnection>(sp => new NpgsqlConnection(connectionString));
 
 var app = builder.Build();
 app.Urls.Add("http://192.168.56.101:5000");
 app.Urls.Add("http://127.0.0.1:5000");
+app.Urls.Add("http://192.168.56.111:5000");
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

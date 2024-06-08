@@ -16,4 +16,8 @@
     <PackageReference Include="Npgsql" Version="8.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TaCoMoLoCo_Express.BL\TaCoMoLoCo_Express.BL.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TaCoMoLoCo_Express.Model;
 
 
 
@@ -12,5 +13,9 @@ namespace TaCoMoLoCo_Express.DA
         {
 
         }
+
+        public DbSet<Usuario> Usuario { get; set; }
+
+        
     }
 }
