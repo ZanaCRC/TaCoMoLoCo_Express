@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Dapper;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using System;
@@ -15,6 +16,13 @@ namespace TaCoMoLoCo_Express.BL
     public class AdministradorDeUsuarios : IAdministradorDeUsuarios
     {
 
+        private NpgsqlConnection _connection;
+
+        public AdministradorDeUsuarios(NpgsqlConnection connection)
+        {
+            _connection = connection;
+        }
+        /*
         public DBContext ElContexto;
 
         public AdministradorDeUsuarios(DBContext elContexto)
@@ -47,7 +55,125 @@ namespace TaCoMoLoCo_Express.BL
                 return false; // Retorna false para indicar que hubo un error al registrar el usuario
             }
 
+        }*/
+
+        public string GetContrasenaAPartirDeUsuario(string username)
+        {
+           
+            var password = _connection.QueryFirstOrDefault<string>(
+                "SELECT Contrasenia FROM Login WHERE Usuario = @Username;",
+                new { Username = username }
+            );
+
+            return password;
         }
+
+        public bool ExisteElUsuario(string cedula)
+        {
+            
+            var count = _connection.QueryFirstOrDefault<int>(
+                "SELECT COUNT(1) FROM Usuario WHERE Cedula = @Cedula;",
+                new { Cedula = cedula }
+            );
+
+            return count > 0;
+        }
+
+
+        public bool PuedeLogearse(string usuario)
+        {
+
+            var count = _connection.QueryFirstOrDefault<int>(
+                "SELECT COUNT(1) FROM Login WHERE Usuario = @Usuario;",
+                new { Usuario = usuario }
+            );
+
+            return count == 0;
+        }
+
+        public void InsertarUsuario(string cedula, string nombre1, string nombre2, string apellido1, string apellido2, int idRol)
+        {
+            var sql = @"
+            INSERT INTO Usuarios (Cedula, Nombre1, Nombre2, Apellido1, Apellido2, IdRol)
+            VALUES (@Cedula, @Nombre1, @Nombre2, @Apellido1, @Apellido2, @IdRol);
+        ";
+
+            _connection.Execute(sql, new
+            {
+                Cedula = cedula,
+                Nombre1 = nombre1,
+                Nombre2 = nombre2,
+                Apellido1 = apellido1,
+                Apellido2 = apellido2,
+               
+                IdRol = idRol
+            });
+        }
+
+        public void InsertarLogin( string cedula, string usuario, string contrasenia)
+        {
+            var sql = @"
+        INSERT INTO Login (Cedula, Usuario, Contrasenia)
+        VALUES (@Id, @Cedula, @Usuario, @Contrasenia);
+    ";
+
+            _connection.Execute(sql, new
+            {
+                
+                Cedula = cedula,
+                Usuario = usuario,
+                Contrasenia = contrasenia
+            });
+        }
+
+
+
+        public int VerifiqueElRol(Usuario usuario) {
+
+            int idRol;
+            if (usuario.IdRol == Model.EnumRol.Cliente)
+            {
+                idRol = 1;
+            }
+            else if (usuario.IdRol == Model.EnumRol.Distribuidor)
+            {
+                idRol = 2;
+
+
+            }
+            else { idRol = 3; }
+
+
+            return idRol;
+
+
+        }
+
+
+        public Login BusqueUsuarioParaLogin(string nombreUsuario)
+        {
+            var usuario = _connection.QueryFirstOrDefault<Login>(
+                "SELECT * FROM Login WHERE Usuario = @NombreUsuario;",
+                new { NombreUsuario = nombreUsuario }
+            );
+
+            return usuario;
+        }
+
+
+        public Usuario BusqueUsuarioPorCedula(string cedula)
+        {
+            var usuario = _connection.QueryFirstOrDefault<Usuario>(
+                "SELECT * FROM Usuario WHERE Cedula = @Cedula;",
+                new { Cedula = cedula }
+            );
+
+            return usuario;
+        }
+
+
+
+
 
     }
 }

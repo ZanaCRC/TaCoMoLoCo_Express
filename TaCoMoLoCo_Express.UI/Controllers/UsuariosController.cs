@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TaCoMoLoCo_Express.BL;
+using TaCoMoLoCo_Express.Model;
+using TaCoMoLoCo_Express.UI.ViewModel;
 
 namespace TaCoMoLoCo_Express.UI.Controllers
 {
@@ -20,18 +22,36 @@ namespace TaCoMoLoCo_Express.UI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Registrarse(UsuarioVM usuario)
+        public IActionResult Registrarse(Model.Login usuario)
         {
-            if (usuario.Clave != usuario.ConfirmarClave)
+            if (usuario.Contrasena != ElAdministrador.GetContrasenaAPartirDeUsuario(usuario.Usuario))
             {
                 ViewData["Mensaje"] = "Las contraseñas no coinciden";
                 return View();
             }
-
-            bool agregadoCorrecto = ElAdministrador.RegistrarUsuario(usuario.Nombre, usuario.correoElectronico, usuario.Clave);
-            if (agregadoCorrecto != false)
+            else 
             {
-                return RedirectToAction("InicieSesion", "Login");
+
+                string cedulaDeQuienInicioSesion;
+                cedulaDeQuienInicioSesion = ElAdministrador.BusqueUsuarioParaLogin(usuario.Usuario).Cedula;
+
+                if (ElAdministrador.BusqueUsuarioPorCedula(cedulaDeQuienInicioSesion).IdRol == Model.EnumRol.Cliente) 
+                {
+                    return RedirectToAction("Index", "Cliente");
+                }
+
+
+              else  if (ElAdministrador.BusqueUsuarioPorCedula(cedulaDeQuienInicioSesion).IdRol == Model.EnumRol.Distribuidor)
+                {
+                    return RedirectToAction("Index", "Cliente");
+                }
+
+                else if (ElAdministrador.BusqueUsuarioPorCedula(cedulaDeQuienInicioSesion).IdRol == Model.EnumRol.Repartidor)
+                {
+                    return RedirectToAction("Index", "Cliente");
+                }
+
+
             }
 
             ViewData["Mensaje"] = "No se pudo crear el usuario, error fatal";
@@ -65,6 +85,60 @@ namespace TaCoMoLoCo_Express.UI.Controllers
                 return View();
             }
         }
+
+
+        // GET: UsuariosController/Create
+        public ActionResult RegistrarNuevoUsuario()
+        {
+            return View();
+        }
+
+        // POST: UsuariosController/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult RegistrarNuevoUsuario(UsuarioLogin nuevoUsuario)
+        {
+            try
+            {
+                if (ElAdministrador.ExisteElUsuario(nuevoUsuario.informacion_usuario.Cedula))
+                {
+                    ViewData["Mensaje"] = "Ya existe un usuario registrado con esa cedula";
+                    return View();
+                }
+                else 
+                {
+                    if (ElAdministrador.PuedeLogearse(nuevoUsuario.informacion_login.Usuario))
+                    {
+
+                       int idRol = ElAdministrador.VerifiqueElRol(nuevoUsuario.informacion_usuario);
+
+                            ElAdministrador.InsertarUsuario(nuevoUsuario.informacion_usuario.Cedula, nuevoUsuario.informacion_usuario.Nombre1, nuevoUsuario.informacion_usuario.Nombre2, nuevoUsuario.informacion_usuario.Apellido1, nuevoUsuario.informacion_usuario.Apellido2, idRol);
+                            ElAdministrador.InsertarLogin(nuevoUsuario.informacion_usuario.Cedula, nuevoUsuario.informacion_login.Usuario, nuevoUsuario.informacion_login.Contrasena);
+                           
+
+
+                    }
+                    else
+                    {
+                        ViewData["Mensaje"] = "Ya existe un usuario para login registrado con ese nombre de usuario";
+                        return View();
+
+                    }
+                
+                
+                }
+               
+
+                ViewData["Mensaje"] = "No se pudo crear el usuario, error fatal";
+                return View();
+               
+            }
+            catch
+            {
+                return View();
+            }
+        }
+       
 
         // GET: UsuariosController/Edit/5
         public ActionResult Edit(int id)

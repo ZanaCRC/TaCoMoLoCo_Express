@@ -1,0 +1,77 @@
+﻿@model TaCoMoLoCo_Express.Model.UsuarioLogin
+
+@{
+    ViewData["Title"] = "RegistrarNuevoUsuario";
+}
+
+<h1>RegistrarNuevoUsuario</h1>
+
+<h4>UsuarioLogin</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="a">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="informacion_usuario.Cedula" class="control-label"></label>
+                <input asp-for="informacion_usuario.Cedula" class="form-control" />
+                <span asp-validation-for="informacion_usuario.Cedula" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="informacion_usuario.Nombre1" class="control-label"></label>
+                <input asp-for="informacion_usuario.Nombre1" class="form-control" />
+                <span asp-validation-for="informacion_usuario.Nombre1" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="informacion_usuario.Nombre2" class="control-label"></label>
+                <input asp-for="informacion_usuario.Nombre2" class="form-control" />
+                <span asp-validation-for="informacion_usuario.Nombre2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                Primer apellido:
+                <input asp-for="informacion_usuario.Apellido1" class="form-control" />
+                <span asp-validation-for="informacion_usuario.Apellido1" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+              Segundo apellido:
+                <input asp-for="informacion_usuario.Apellido2" class="form-control" />
+                <span asp-validation-for="informacion_usuario.Apellido2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                Seleccione el rol:
+               
+                <select asp-for="informacion_usuario.IdRol" asp-items="Html.GetEnumSelectList<EnumRol>()">
+                </select>
+                <span asp-validation-for="informacion_usuario.IdRol" class="text-danger"></span>
+            </div>
+
+
+
+             <div class="form-group">
+              Usuario:
+                <input asp-for="informacion_login.Usuario" class="form-control" />
+                <span asp-validation-for="informacion_login.Usuario" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+               Contraseña:
+                <input asp-for="informacion_login.Contrasena" class="form-control" />
+                <span asp-validation-for="informacion_login.Contrasena" class="text-danger"></span>
+            </div>
+
+            
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
