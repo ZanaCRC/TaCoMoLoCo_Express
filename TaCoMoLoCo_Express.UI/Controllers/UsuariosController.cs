@@ -133,8 +133,9 @@ namespace TaCoMoLoCo_Express.UI.Controllers
                 return View();
                
             }
-            catch
+            catch (Exception ex)
             {
+                ViewData["Mensaje"] = ex;
                 return View();
             }
         }

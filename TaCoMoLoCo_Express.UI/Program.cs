@@ -1,18 +1,18 @@
 using Npgsql;
+using TaCoMoLoCo_Express.BL;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IAdministradorDeUsuarios, AdministradorDeUsuarios>();
 
 // Accede a la cadena de conexi�n
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddScoped<NpgsqlConnection>(sp => new NpgsqlConnection(connectionString));
 
 var app = builder.Build();
-app.Urls.Add("http://192.168.56.101:5000");
-app.Urls.Add("http://127.0.0.1:5000");
-app.Urls.Add("http://192.168.56.111:5000");
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -31,6 +31,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Usuarios}/{action=Registrarse}/{id?}");
 
 app.Run();

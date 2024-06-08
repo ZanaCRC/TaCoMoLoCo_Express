@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TaCoMoLoCo_Express.BL\TaCoMoLoCo_Express.BL.csproj" />
+    <ProjectReference Include="..\TaCoMoLoCo_Express.Model\TaCoMoLoCo_Express.Model.csproj" />
   </ItemGroup>
 
 </Project>

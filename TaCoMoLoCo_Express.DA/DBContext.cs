@@ -16,6 +16,8 @@ namespace TaCoMoLoCo_Express.DA
 
         public DbSet<Usuario> Usuario { get; set; }
 
-        
+        public DbSet<Login> Login { get; set; }
+
+
     }
 }
