@@ -10,8 +10,8 @@ namespace TaCoMoLoCo_Express.BL
     public interface IAdministradorDeUsuarios
     {
         public string GetContrasenaAPartirDeUsuario(string username);
-        public bool PuedeLogearse(string usuario);
-        public bool ExisteElUsuario(string cedula);
+        public bool ExisteElUsuario(string usuario);
+        public bool YaPoseeUnaCuenta(string cedula);
         public void InsertarUsuario(string cedula, string nombre1, string nombre2, string apellido1, string apellido2, int idRol);
         public int VerifiqueElRol(Usuario usuario);
         public void InsertarLogin( string cedula, string usuario, string contrasenia);

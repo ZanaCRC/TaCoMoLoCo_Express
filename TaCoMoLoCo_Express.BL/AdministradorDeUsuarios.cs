@@ -61,18 +61,22 @@ namespace TaCoMoLoCo_Express.BL
         {
            
             var password = _connection.QueryFirstOrDefault<string>(
-                "SELECT Contrasenia FROM Login WHERE Usuario = @Username;",
+                @"SELECT ""Contrasenia"" FROM ""public"".""Login"" 
+                           WHERE ""Usuario"" = @Username;",
+            
                 new { Username = username }
             );
 
             return password;
         }
 
-        public bool ExisteElUsuario(string cedula)
+        public bool YaPoseeUnaCuenta(string cedula)
         {
             
             var count = _connection.QueryFirstOrDefault<int>(
-                "SELECT COUNT(1) FROM Usuario WHERE Cedula = @Cedula;",
+                @"SELECT COUNT(1)
+                           FROM public.""Usuario""
+                           WHERE ""Cedula"" = @Cedula;",
                 new { Cedula = cedula }
             );
 
@@ -80,23 +84,23 @@ namespace TaCoMoLoCo_Express.BL
         }
 
 
-        public bool PuedeLogearse(string usuario)
+        public bool ExisteElUsuario(string usuario)
         {
 
             var count = _connection.QueryFirstOrDefault<int>(
-                "SELECT COUNT(1) FROM Login WHERE Usuario = @Usuario;",
+                @"SELECT COUNT(1)
+                           FROM ""Login""
+                           WHERE ""Usuario"" = @Usuario;",
                 new { Usuario = usuario }
             );
 
-            return count == 0;
+            return count > 0;
         }
 
         public void InsertarUsuario(string cedula, string nombre1, string nombre2, string apellido1, string apellido2, int idRol)
         {
             var sql = @"
-            INSERT INTO Usuarios (Cedula, Nombre1, Nombre2, Apellido1, Apellido2, IdRol)
-            VALUES (@Cedula, @Nombre1, @Nombre2, @Apellido1, @Apellido2, @IdRol);
-        ";
+            CALL public.insertar_usuario (@Cedula, @Nombre1, @Nombre2, @Apellido1, @Apellido2, @IdRol);";
 
             _connection.Execute(sql, new
             {
@@ -113,9 +117,7 @@ namespace TaCoMoLoCo_Express.BL
         public void InsertarLogin( string cedula, string usuario, string contrasenia)
         {
             var sql = @"
-        INSERT INTO Login (Cedula, Usuario, Contrasenia)
-        VALUES (@Id, @Cedula, @Usuario, @Contrasenia);
-    ";
+        CALL public.insertar_login (@Cedula, @Usuario, @Contrasenia);";
 
             _connection.Execute(sql, new
             {
@@ -153,7 +155,7 @@ namespace TaCoMoLoCo_Express.BL
         public Login BusqueUsuarioParaLogin(string nombreUsuario)
         {
             var usuario = _connection.QueryFirstOrDefault<Login>(
-                "SELECT * FROM Login WHERE Usuario = @NombreUsuario;",
+                @"SELECT * FROM ""Login"" WHERE ""Usuario"" = @NombreUsuario;",
                 new { NombreUsuario = nombreUsuario }
             );
 
@@ -164,7 +166,7 @@ namespace TaCoMoLoCo_Express.BL
         public Usuario BusqueUsuarioPorCedula(string cedula)
         {
             var usuario = _connection.QueryFirstOrDefault<Usuario>(
-                "SELECT * FROM Usuario WHERE Cedula = @Cedula;",
+                 @"SELECT * FROM ""Usuario"" WHERE ""Cedula"" = @Cedula;",
                 new { Cedula = cedula }
             );
 

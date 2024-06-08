@@ -14,7 +14,7 @@
                     Registrate
                 </div>
                 <div class="card-body">
-                    <form asp-for="Login" asp-action="RegistrarNuevoUsuario" method="post">
+                    <form asp-for="Usuarios" asp-action="RegistrarNuevoUsuario" method="post">
                         <input class="form-control mb-3" type="text" placeholder="Cédula" required asp-for="informacion_usuario.Cedula" />
                         <input class="form-control mb-3" type="text" placeholder="Primer Nombre" required asp-for="informacion_usuario.Nombre1" />
                         <input class="form-control mb-3" type="text" placeholder="Segundo Nombre" asp-for="informacion_usuario.Nombre2" />

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq.Expressions;
 using TaCoMoLoCo_Express.BL;
 using TaCoMoLoCo_Express.Model;
 using TaCoMoLoCo_Express.UI.ViewModel;
@@ -12,53 +13,65 @@ namespace TaCoMoLoCo_Express.UI.Controllers
         public UsuariosController(IAdministradorDeUsuarios elAdministrador)
         {
 
-            ElAdministrador = elAdministrador;  
+            ElAdministrador = elAdministrador;
 
         }
         [HttpGet]
-        public IActionResult Registrarse()
+        public ActionResult Registrarse()
         {
             return View();
         }
 
         [HttpPost]
-        public IActionResult Registrarse(Model.Login usuario)
+        public ActionResult Registrarse(Login usuarioLogueo)
         {
-            if (usuario.Contrasena != ElAdministrador.GetContrasenaAPartirDeUsuario(usuario.Usuario))
+
+            if (!ElAdministrador.ExisteElUsuario(usuarioLogueo.Usuario))
             {
-                ViewData["Mensaje"] = "Las contraseñas no coinciden";
+                ViewData["Mensaje"] = "Credenciales incorrectas";
                 return View();
             }
-            else 
-            {
-
-                string cedulaDeQuienInicioSesion;
-                cedulaDeQuienInicioSesion = ElAdministrador.BusqueUsuarioParaLogin(usuario.Usuario).Cedula;
-
-                if (ElAdministrador.BusqueUsuarioPorCedula(cedulaDeQuienInicioSesion).IdRol == Model.EnumRol.Cliente) 
+                if (usuarioLogueo.Contrasena != ElAdministrador.GetContrasenaAPartirDeUsuario(usuarioLogueo.Usuario))
                 {
-                    return RedirectToAction("Index", "Cliente");
+                    ViewData["Mensaje"] = "Credenciales incorrectas";
+                    return View();
                 }
-
-
-              else  if (ElAdministrador.BusqueUsuarioPorCedula(cedulaDeQuienInicioSesion).IdRol == Model.EnumRol.Distribuidor)
+                else
                 {
-                    return RedirectToAction("Index", "Cliente");
+
+                    string cedulaDeQuienInicioSesion;
+                    cedulaDeQuienInicioSesion = ElAdministrador.BusqueUsuarioParaLogin(usuarioLogueo.Usuario).Cedula;
+
+                    if (ElAdministrador.BusqueUsuarioPorCedula(cedulaDeQuienInicioSesion).IdRol == Model.EnumRol.Cliente)
+                    {
+                        /*return RedirectToAction("Index", "Cliente");*/
+                        ViewData["Mensaje"] = "Inicio de sesion correcto";
+
+                    }
+
+
+                    else if (ElAdministrador.BusqueUsuarioPorCedula(cedulaDeQuienInicioSesion).IdRol == Model.EnumRol.Distribuidor)
+                    {
+                        /*return RedirectToAction("Index", "Cliente");*/
+                        ViewData["Mensaje"] = "Inicio de sesion correcto";
+
+                    }
+
+                    else if (ElAdministrador.BusqueUsuarioPorCedula(cedulaDeQuienInicioSesion).IdRol == Model.EnumRol.Repartidor)
+                    {
+                        /*return RedirectToAction("Index", "Cliente");*/
+                        ViewData["Mensaje"] = "Inicio de sesion correcto";
+
+                    }
+
+                    
                 }
+                return View();
 
-                else if (ElAdministrador.BusqueUsuarioPorCedula(cedulaDeQuienInicioSesion).IdRol == Model.EnumRol.Repartidor)
-                {
-                    return RedirectToAction("Index", "Cliente");
-                }
-
-
-            }
-
-            ViewData["Mensaje"] = "No se pudo crear el usuario, error fatal";
-            return View();
-
-
+        
         }
+    
+    
         // GET: UsuariosController/Details/5
         public ActionResult Details(int id)
         {
@@ -100,22 +113,22 @@ namespace TaCoMoLoCo_Express.UI.Controllers
         {
             try
             {
-                if (ElAdministrador.ExisteElUsuario(nuevoUsuario.informacion_usuario.Cedula))
+                if (ElAdministrador.YaPoseeUnaCuenta(nuevoUsuario.informacion_usuario.Cedula))
                 {
                     ViewData["Mensaje"] = "Ya existe un usuario registrado con esa cedula";
                     return View();
                 }
-                else 
+                else
                 {
-                    if (ElAdministrador.PuedeLogearse(nuevoUsuario.informacion_login.Usuario))
+                    if (!ElAdministrador.ExisteElUsuario(nuevoUsuario.informacion_login.Usuario))
                     {
 
-                       int idRol = ElAdministrador.VerifiqueElRol(nuevoUsuario.informacion_usuario);
+                        int idRol = ElAdministrador.VerifiqueElRol(nuevoUsuario.informacion_usuario);
 
-                            ElAdministrador.InsertarUsuario(nuevoUsuario.informacion_usuario.Cedula, nuevoUsuario.informacion_usuario.Nombre1, nuevoUsuario.informacion_usuario.Nombre2, nuevoUsuario.informacion_usuario.Apellido1, nuevoUsuario.informacion_usuario.Apellido2, idRol);
-                            ElAdministrador.InsertarLogin(nuevoUsuario.informacion_usuario.Cedula, nuevoUsuario.informacion_login.Usuario, nuevoUsuario.informacion_login.Contrasena);
-                           
+                        ElAdministrador.InsertarUsuario(nuevoUsuario.informacion_usuario.Cedula, nuevoUsuario.informacion_usuario.Nombre1, nuevoUsuario.informacion_usuario.Nombre2, nuevoUsuario.informacion_usuario.Apellido1, nuevoUsuario.informacion_usuario.Apellido2, idRol);
+                        ElAdministrador.InsertarLogin(nuevoUsuario.informacion_usuario.Cedula, nuevoUsuario.informacion_login.Usuario, nuevoUsuario.informacion_login.Contrasena);
 
+                        return RedirectToAction("Registrarse", "Usuarios");
 
                     }
                     else
@@ -124,14 +137,14 @@ namespace TaCoMoLoCo_Express.UI.Controllers
                         return View();
 
                     }
-                
-                
+
+
                 }
-               
+
 
                 ViewData["Mensaje"] = "No se pudo crear el usuario, error fatal";
                 return View();
-               
+
             }
             catch (Exception ex)
             {
@@ -139,7 +152,7 @@ namespace TaCoMoLoCo_Express.UI.Controllers
                 return View();
             }
         }
-       
+
 
         // GET: UsuariosController/Edit/5
         public ActionResult Edit(int id)
