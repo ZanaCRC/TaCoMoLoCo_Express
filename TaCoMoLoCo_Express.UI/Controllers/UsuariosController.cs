@@ -20,7 +20,7 @@ namespace TaCoMoLoCo_Express.UI.Controllers
         {
             return View();
         }
-
+        /*
         [HttpPost]
         public IActionResult Registrarse(Model.Login usuario)
         {
@@ -29,7 +29,13 @@ namespace TaCoMoLoCo_Express.UI.Controllers
                 ViewData["Mensaje"] = "Las contraseñas no coinciden";
                 return View();
             }
+<<<<<<< HEAD
             else 
+=======
+
+       //     bool agregadoCorrecto = ElAdministrador.RegistrarUsuario(usuario.Nombre, usuario.correoElectronico, usuario.Clave);
+            if (agregadoCorrecto != false)
+>>>>>>> Arreglos
             {
 
                 string cedulaDeQuienInicioSesion;
@@ -59,6 +65,7 @@ namespace TaCoMoLoCo_Express.UI.Controllers
 
 
         }
+        */
         // GET: UsuariosController/Details/5
         public ActionResult Details(int id)
         {
