@@ -41,8 +41,9 @@ namespace TaCoMoLoCo_Express.UI.Controllers
 
                     string cedulaDeQuienInicioSesion;
                     cedulaDeQuienInicioSesion = ElAdministrador.BusqueUsuarioParaLogin(usuarioLogueo.Usuario).Cedula;
+                Model.Usuario usuarioBuscado = ElAdministrador.BusqueUsuarioPorCedula(cedulaDeQuienInicioSesion);
 
-                    if (ElAdministrador.BusqueUsuarioPorCedula(cedulaDeQuienInicioSesion).IdRol == Model.EnumRol.Cliente)
+                    if (usuarioBuscado.IdRol == Model.EnumRol.Cliente)
                     {
                         /*return RedirectToAction("Index", "Cliente");*/
                         ViewData["Mensaje"] = "Inicio de sesion correcto";
@@ -50,14 +51,14 @@ namespace TaCoMoLoCo_Express.UI.Controllers
                     }
 
 
-                    else if (ElAdministrador.BusqueUsuarioPorCedula(cedulaDeQuienInicioSesion).IdRol == Model.EnumRol.Distribuidor)
+                    else if (usuarioBuscado.IdRol == Model.EnumRol.Distribuidor)
                     {
                         /*return RedirectToAction("Index", "Cliente");*/
                         ViewData["Mensaje"] = "Inicio de sesion correcto";
 
                     }
 
-                    else if (ElAdministrador.BusqueUsuarioPorCedula(cedulaDeQuienInicioSesion).IdRol == Model.EnumRol.Repartidor)
+                    else if (usuarioBuscado.IdRol == Model.EnumRol.Repartidor)
                     {
                         /*return RedirectToAction("Index", "Cliente");*/
                         ViewData["Mensaje"] = "Inicio de sesion correcto";

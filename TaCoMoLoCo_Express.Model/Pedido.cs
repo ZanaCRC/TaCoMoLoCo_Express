@@ -9,7 +9,7 @@ namespace TaCoMoLoCo_Express.Model
 {
     public class Pedido
     {
-        public int Id { get; set; }
+        public int Codigo { get; set; }
         [ForeignKey("Usuario")]
         public string CedulaCliente { get; set; }
 
@@ -26,7 +26,7 @@ namespace TaCoMoLoCo_Express.Model
 
         [ForeignKey("Estado")]
         public int IdEstado { get; set; }
-        public Estado Estado { get; set; }
+        public EnumEstadoPedido Estado { get; set; }
         public DateTime FechaDePedido { get; set; }
         public DateTime FechaDeEntrega { get; set; }
         public double ImporteTotal { get; set; }

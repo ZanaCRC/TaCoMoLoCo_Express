@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IAdministradorDeUsuarios, AdministradorDeUsuarios>();
+builder.Services.AddScoped<IAdministradorDePedidos, AdministradorDePedidos>();
 
 // Accede a la cadena de conexi�n
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -31,6 +32,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Usuarios}/{action=Registrarse}/{id?}");
+    pattern: "{controller=Distribuidor}/{action=Index}/{id?}");
 
 app.Run();
