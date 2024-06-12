@@ -17,5 +17,7 @@ namespace TaCoMoLoCo_Express.BL
         public void InsertarLogin( string cedula, string usuario, string contrasenia);
         public Login BusqueUsuarioParaLogin(string nombreUsuario);
         public Usuario BusqueUsuarioPorCedula(string cedula);
+
+        string ObtengaNombreCompletoPorUsuario(string username);
     }
 }

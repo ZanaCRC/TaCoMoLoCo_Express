@@ -173,6 +173,19 @@ namespace TaCoMoLoCo_Express.BL
             return usuario;
         }
 
+        public string ObtengaNombreCompletoPorUsuario(string username)
+        {
+            var laCedula = _connection.QueryFirstOrDefault<Login>(
+            @"SELECT ""Cedula"" FROM ""Login"" WHERE ""Usuario"" = @nombreUsuario;",
+            new { nombreUsuario = username });
+
+            var NombreCompleto = _connection.QueryFirstOrDefault<Usuario>(
+            @"SELECT ""Nombre1"" ""Nombre2"" ""Apellido1"" ""Apellido2"" FROM ""Login"" WHERE ""Cedula"" = @cedula;",
+            new { cedula = laCedula });
+
+            return NombreCompleto.ToString();
+        }
+
 
       
 
