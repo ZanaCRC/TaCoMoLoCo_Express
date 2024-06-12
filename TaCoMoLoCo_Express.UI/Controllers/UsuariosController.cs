@@ -80,7 +80,7 @@ namespace TaCoMoLoCo_Express.UI.Controllers
                         AllowRefresh = true
                     };
 
-                     HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), prop);
+                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), prop);
 
                 if (usuarioBuscado.IdRol == Model.EnumRol.Cliente)
                     {
