@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.Identity.Client;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq.Expressions;
+using System.Security.Claims;
 using TaCoMoLoCo_Express.BL;
 using TaCoMoLoCo_Express.Model;
 using TaCoMoLoCo_Express.UI.ViewModel;
@@ -23,7 +27,7 @@ namespace TaCoMoLoCo_Express.UI.Controllers
         }
 
         [HttpPost]
-        public ActionResult Registrarse(Login usuarioLogueo)
+        public async Task<IActionResult> Registrarse(Login usuarioLogueo)
         {
 
             if (!ElAdministrador.ExisteElUsuario(usuarioLogueo.Usuario))
@@ -39,7 +43,26 @@ namespace TaCoMoLoCo_Express.UI.Controllers
                 else
                 {
 
-                    string cedulaDeQuienInicioSesion;
+               /* List<Claim> claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, ElAdministrador.ObtengaNombreCompletoPorUsuario(usuarioLogueo.Usuario)),
+
+                };
+
+                ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                AuthenticationProperties properties = new AuthenticationProperties
+                {
+                    AllowRefresh = true,
+                    IsPersistent = true
+                };
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity),
+                    properties
+                    );
+               */
+                string cedulaDeQuienInicioSesion;
                     cedulaDeQuienInicioSesion = ElAdministrador.BusqueUsuarioParaLogin(usuarioLogueo.Usuario).Cedula;
                 Model.Usuario usuarioBuscado = ElAdministrador.BusqueUsuarioPorCedula(cedulaDeQuienInicioSesion);
 
