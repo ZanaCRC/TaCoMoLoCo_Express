@@ -1,0 +1,63 @@
+﻿@model List<Plato>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Platos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+        .plato {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            background-color: #f9f9f9;
+        }
+        .plato img {
+            max-width: 100px;
+            margin-right: 20px;
+        }
+        .plato h2 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        .plato p {
+            margin: 5px 0;
+        }
+        .plato .precio {
+            font-weight: bold;
+            color: #e67e22;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lista de Platos</h1>
+        @foreach (var plato in Model)
+        {
+            <div class="plato">
+                <img src="@plato.ImagenUrl" alt="@plato.Nombre" />
+                <div>
+                    <h2>@plato.Nombre</h2>
+                    <p>@plato.Descripcion</p>
+                    <p class="precio">$@plato.Precio</p>
+                    <form method="post" action="@Url.Action("AgregarAlCarrito", "MenuPlatos")">
+                        <input type="hidden" name="platoId" value="@plato.Id" />
+                        <button type="submit">Agregar al Carrito</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+</body>
+</html>
