@@ -8,7 +8,9 @@ using System.Security.Claims;
 using TaCoMoLoCo_Express.BL;
 using TaCoMoLoCo_Express.Model;
 using TaCoMoLoCo_Express.UI.ViewModel;
-
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 namespace TaCoMoLoCo_Express.UI.Controllers
 {
     public class UsuariosController : Controller
@@ -64,12 +66,27 @@ namespace TaCoMoLoCo_Express.UI.Controllers
                */
                 string cedulaDeQuienInicioSesion;
                     cedulaDeQuienInicioSesion = ElAdministrador.BusqueUsuarioParaLogin(usuarioLogueo.Usuario).Cedula;
-                Model.Usuario usuarioBuscado = ElAdministrador.BusqueUsuarioPorCedula(cedulaDeQuienInicioSesion);
-
-                    if (usuarioBuscado.IdRol == Model.EnumRol.Cliente)
+                    Model.Usuario usuarioBuscado = ElAdministrador.BusqueUsuarioPorCedula(cedulaDeQuienInicioSesion);
+                    List<Claim> claims = new List<Claim>
+                        {
+                            new Claim(ClaimTypes.Name, usuarioBuscado.Nombre1),
+                            new Claim(ClaimTypes.Role, usuarioBuscado.IdRol.ToString())
+                        };
+                    ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    AuthenticationProperties prop = new AuthenticationProperties
                     {
-                        /*return RedirectToAction("Index", "Cliente");*/
-                        ViewData["Mensaje"] = "Inicio de sesion correcto";
+                        // IsPersistent = true,
+                        // ExpiresUtc = DateTime.UtcNow.AddMinutes(20)
+                        AllowRefresh = true
+                    };
+
+                     HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), prop);
+
+                if (usuarioBuscado.IdRol == Model.EnumRol.Cliente)
+                    {
+                    
+                    /*return RedirectToAction("Index", "Cliente");*/
+                    ViewData["Mensaje"] = "Inicio de sesion correcto";
 
                     }
 

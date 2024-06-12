@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Npgsql;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
 using TaCoMoLoCo_Express.BL;
 
 var builder = WebApplication.CreateBuilder(args);
