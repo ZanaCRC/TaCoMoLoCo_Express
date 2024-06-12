@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Npgsql;
 using TaCoMoLoCo_Express.BL;
 
@@ -7,10 +8,23 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IAdministradorDeUsuarios, AdministradorDeUsuarios>();
 builder.Services.AddScoped<IAdministradorDePedidos, AdministradorDePedidos>();
+builder.Services.AddScoped<IAdministradorDePlatos, AdministradorDePlatos>();
 
 // Accede a la cadena de conexi�n
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddScoped<NpgsqlConnection>(sp => new NpgsqlConnection(connectionString));
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+
+})
+.AddCookie(options =>
+{
+    options.LoginPath = "/Login/InicieSesion";
+    options.AccessDeniedPath = "/Login/InicieSesion";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+});
 
 var app = builder.Build();
 
@@ -28,10 +42,14 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
+
 app.UseAuthorization();
+
+//app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Distribuidor}/{action=Index}/{id?}");
+    pattern: "{controller=Usuarios}/{action=Registrarse}/{id?}");
 
 app.Run();
