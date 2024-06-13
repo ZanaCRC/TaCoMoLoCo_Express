@@ -10,12 +10,16 @@ namespace TaCoMoLoCo_Express.DA
     {
         public DbSet<Model.Restaurante> Restaurantes { get; set; }
        
-
+        
         public DBContext(DbContextOptions<DBContext> options) : base(options)
 
         {
 
         }
+        public DbSet<Cobertura> Coberturas { get; set; }
+        // Definiciones de otros DbSets...
+
+        
 
         public DbSet<Usuario> Usuario { get; set; }
 
@@ -24,9 +28,14 @@ namespace TaCoMoLoCo_Express.DA
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Usuario>().ToTable("usuario");
+            // Configura la clave primaria compuesta para Coberturas
+            modelBuilder.Entity<Cobertura>()
+                .HasKey(c => new { c.IdRestaurante, c.IdBarrio });
             // Configuraciones para tus otras entidades...
-
             base.OnModelCreating(modelBuilder);
+
+       
+
         }
 
     }
