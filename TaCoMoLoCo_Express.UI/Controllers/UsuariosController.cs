@@ -55,13 +55,14 @@ namespace TaCoMoLoCo_Express.UI.Controllers
                             new Claim(ClaimTypes.Role, usuarioBuscado.IdRol.ToString()),
                             new Claim(ClaimTypes.StreetAddress, usuarioBuscado.IdDireccion.ToString()),
                             new Claim("CedulaUsuario", usuarioBuscado.Cedula)
+                            
 
                         };
                     ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     AuthenticationProperties prop = new AuthenticationProperties
                     {
-                        // IsPersistent = true,
-                        // ExpiresUtc = DateTime.UtcNow.AddMinutes(20)
+                        IsPersistent = true,
+                        ExpiresUtc = DateTime.UtcNow.AddMinutes(20),
                         AllowRefresh = true
                     };
 
