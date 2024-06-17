@@ -1,63 +1,98 @@
-﻿@model List<Plato>
+﻿@model IEnumerable<TaCoMoLoCo_Express.Model.Plato>
+
+@{
+    Layout = null;
+}
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Platos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+            font-family: 'Poppins', sans-serif;
         }
-        .container {
-            max-width: 800px;
-            margin: auto;
-            padding: 20px;
+        .custom-rounded {
+            border-radius: 25px;
         }
-        .plato {
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            background-color: #f9f9f9;
-        }
-        .plato img {
-            max-width: 100px;
-            margin-right: 20px;
-        }
-        .plato h2 {
-            margin: 0;
-            font-size: 1.5em;
-        }
-        .plato p {
-            margin: 5px 0;
-        }
-        .plato .precio {
-            font-weight: bold;
-            color: #e67e22;
+        .custom-tr-rounded {
+            border-radius: 0 25px 0 0;
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h1>Lista de Platos</h1>
-        @foreach (var plato in Model)
-        {
-            <div class="plato">
-                <img src="@plato.ImagenUrl" alt="@plato.Nombre" />
-                <div>
-                    <h2>@plato.Nombre</h2>
-                    <p>@plato.Descripcion</p>
-                    <p class="precio">$@plato.Precio</p>
-                    <form method="post" action="@Url.Action("AgregarAlCarrito", "MenuPlatos")">
-                        <input type="hidden" name="platoId" value="@plato.Id" />
-                        <button type="submit">Agregar al Carrito</button>
-                    </form>
+<body class="bg-gray-100">
+    <div class="flex" id="dribbleShot">
+        <div class="main px-16 border-r border-gray-200">
+            <div class="h-12 mt-8 flex items-center">
+                <i class="fa fa-bars cursor-pointer"></i>
+                <h6 class="font-bold text-lg mx-10">Lista de Platos</h6>
+                <div class="flex items-center ml-auto bg-gray-100 self-stretch custom-rounded px-4 w-2/3">
+                    <i class="fa fa-search"></i>
+                    <input type="text" class="px-4 self-stretch bg-transparent flex-grow outline-none" placeholder="Buscar">
                 </div>
             </div>
-        }
+            <div class="grid grid-cols-3 bg-orange-100 mt-12 rounded-lg">
+                <!-- Aquí podrías agregar contenido adicional o un mensaje -->
+            </div>
+
+            <div class="mt-12 grid grid-cols-5 gap-10">
+                @foreach (var food in Model)
+                {
+                    <div class="flex flex-col">
+                        <div class="shadow-lg relative h-40 custom-rounded" style="background-size: cover; background-repeat: no-repeat; background-image: url(/Imagenes/tres.jpg);">
+                            <div class="absolute bottom-0 left-0 w-1/3 bg-gray-200 rounded-tr-lg p-2 text-center text-xs">
+                                <span class="font-bold">5 -</span> 10
+                            </div>
+                        </div>
+                        <p class="mt-4 font-medium">@food.Nombre</p>
+                        <div class="mt-2 flex items-center">
+                            <span class="text-xs"><i class="fa fa-star"></i> 5</span>
+                            <span class="text-gray-600 font-hairline text-xs mx-4">@food.Categoria</span>
+                            <span class="text-gray-600 font-hairline text-xs mx-4">@food.Descripcion</span>
+                            
+                        </div>
+                    </div>
+                }
+
+
+            </div>
+
+            
+        </div>
+       
+        <div class="bg-gray-100 sidebar flex flex-col">
+            <div class="px-6">
+                <div class="h-12 mt-8 flex justify-end items-center">
+                    <i class="fa fa-user"></i>
+                    <div class="rounded-lg bg-yellow-400 px-3 font-bold text-xs py-1 ml-6">3</div>
+                </div>
+
+            </div>
+            <div class="flex-grow flex flex-col pl-6 justify-end">
+                <div class="flex justify-between items-center border-b-2 pb-2">
+                    <span>Total:</span>
+                    <span class="text-xl font-medium pr-6">$25.97</span>
+                </div>
+                <div class="flex justify-between pt-4 text-xs font-bold">
+                    <div class="flex flex-col">
+                        <span>Persons</span>
+                        <div class="flex items-center mt-3">
+                            <span class="border border-r-0 p-2 rounded-l-lg">-</span>
+                            <span class="border-b border-t p-2 ">1</span>
+                            <span class="border border-l-0 p-2 rounded-r-lg">+</span>
+                        </div>
+                    </div>
+                    <div class="ml-auto bg-yellow-400 p-6 rounded-l-lg">
+                        Checkout <i class="ml-3 fa fa-arrow-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </body>
 </html>

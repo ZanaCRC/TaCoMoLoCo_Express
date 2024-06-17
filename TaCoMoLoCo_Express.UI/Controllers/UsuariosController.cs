@@ -45,32 +45,16 @@ namespace TaCoMoLoCo_Express.UI.Controllers
                 else
                 {
 
-               /* List<Claim> claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, ElAdministrador.ObtengaNombreCompletoPorUsuario(usuarioLogueo.Usuario)),
 
-                };
-
-                ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                AuthenticationProperties properties = new AuthenticationProperties
-                {
-                    AllowRefresh = true,
-                    IsPersistent = true
-                };
-
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity),
-                    properties
-                    );
-               */
                 string cedulaDeQuienInicioSesion;
                     cedulaDeQuienInicioSesion = ElAdministrador.BusqueUsuarioParaLogin(usuarioLogueo.Usuario).Cedula;
                     Model.Usuario usuarioBuscado = ElAdministrador.BusqueUsuarioPorCedula(cedulaDeQuienInicioSesion);
                     List<Claim> claims = new List<Claim>
                         {
-                            new Claim(ClaimTypes.Name, usuarioBuscado.Nombre1),
-                            new Claim(ClaimTypes.Role, usuarioBuscado.IdRol.ToString())
+                            new Claim(ClaimTypes.Name, usuarioBuscado.Nombre1 + usuarioBuscado.Nombre2 + usuarioBuscado.Apellido1 + usuarioBuscado.Apellido2),
+                            new Claim(ClaimTypes.Role, usuarioBuscado.IdRol.ToString()),
+                            new Claim(ClaimTypes.StreetAddress, usuarioBuscado.IdDireccion.ToString())
+
                         };
                     ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     AuthenticationProperties prop = new AuthenticationProperties
@@ -82,11 +66,17 @@ namespace TaCoMoLoCo_Express.UI.Controllers
 
                      await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), prop);
 
-                if (usuarioBuscado.IdRol == Model.EnumRol.Cliente)
+                var roleClaim = claimsIdentity.FindFirst(claimsIdentity.RoleClaimType);
+
+                if (roleClaim.Value == "Cliente")
                     {
+
+                    int.TryParse(claimsIdentity.FindFirst(ClaimTypes.StreetAddress).Value, out int idDireccion);
+
+                    int idRestaurante = ElAdministrador.BusqueRestauranteEnLaCobertura(idDireccion);
+
+                    return RedirectToAction("Index", "MenuPlatos", new { IdRestaurante = idRestaurante });
                     
-                    /*return RedirectToAction("Index", "Cliente");*/
-                    ViewData["Mensaje"] = "Inicio de sesion correcto";
 
                     }
 

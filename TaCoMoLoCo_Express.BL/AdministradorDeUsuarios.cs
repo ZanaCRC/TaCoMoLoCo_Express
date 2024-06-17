@@ -22,40 +22,7 @@ namespace TaCoMoLoCo_Express.BL
         {
             _connection = connection;
         }
-        /*
-        public DBContext ElContexto;
 
-        public AdministradorDeUsuarios(DBContext elContexto)
-        {
-            ElContexto = elContexto;
-        }
-
-        public async Task<bool> RegistrarUsuario(string new_cedula, string new_nombre1, string new_nombre2, string new_apellido1, string new_apellido2, string new_iddireccion)
-        {
-            try
-            {
-                // Utiliza parámetros en la consulta SQL para prevenir ataques de inyección
-                int registrosAfectados = await ElContexto.Database
-                    .ExecuteSqlRawAsync("EXEC RegistrarUsuario @Cedula, @Nombre1, @Nombre2, @Apellido1, @Apellido2, @IdDireccion",
-                        new SqlParameter("@Cedula", new_cedula),
-                        new SqlParameter("@Nombre1", new_nombre1),
-                        new SqlParameter("@Nombre2", new_nombre2),
-                        new SqlParameter("@Apellido1", new_apellido1),
-                        new SqlParameter("@Apellido2", new_apellido2),
-                        new SqlParameter("@IdDireccion", new_iddireccion));
-
-
-
-                return registrosAfectados > 0; // Retorna true si al menos un registro fue afectado
-            }
-            catch (Exception ex)
-            {
-                // Maneja la excepción de manera significativa para tu aplicación, por ejemplo, registrándola
-                Console.WriteLine($"Error al registrar usuario: {ex.Message}");
-                return false; // Retorna false para indicar que hubo un error al registrar el usuario
-            }
-
-        }*/
 
         public string GetContrasenaAPartirDeUsuario(string username)
         {
@@ -173,22 +140,24 @@ namespace TaCoMoLoCo_Express.BL
             return usuario;
         }
 
-        public string ObtengaNombreCompletoPorUsuario(string username)
+
+        public int BusqueRestauranteEnLaCobertura(int idDireccion)
         {
-            var laCedula = _connection.QueryFirstOrDefault<Login>(
-            @"SELECT ""Cedula"" FROM ""Login"" WHERE ""Usuario"" = @nombreUsuario;",
-            new { nombreUsuario = username });
-
-            var NombreCompleto = _connection.QueryFirstOrDefault<Usuario>(
-            @"SELECT ""Nombre1"" ""Nombre2"" ""Apellido1"" ""Apellido2"" FROM ""Login"" WHERE ""Cedula"" = @cedula;",
-            new { cedula = laCedula });
-
-            return NombreCompleto.ToString();
+            int idBarrio = ObtengaIdBarrioDeDireccion(idDireccion);
+            int idrestaurante = _connection.QueryFirstOrDefault<int>(
+     @"SELECT ""IdRestaurante"" FROM ""Coberturas"" WHERE ""IdBarrio"" = @IdBarrio;",
+    new { IdBarrio = idBarrio }
+);
+            return idrestaurante;
         }
 
 
-      
+        public int ObtengaIdBarrioDeDireccion(int idDireccion)
+        {
+            int idBarrio = _connection.QueryFirstOrDefault<int>(
+            @"SELECT ""IdBarrio"" FROM ""Direccion"" WHERE ""Id"" = @IdDireccion;", new { IdDireccion = idDireccion});
 
-
+            return idBarrio;
+        }
     }
 }

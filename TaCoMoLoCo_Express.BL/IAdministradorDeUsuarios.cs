@@ -18,6 +18,7 @@ namespace TaCoMoLoCo_Express.BL
         public Login BusqueUsuarioParaLogin(string nombreUsuario);
         public Usuario BusqueUsuarioPorCedula(string cedula);
 
-        string ObtengaNombreCompletoPorUsuario(string username);
+        int BusqueRestauranteEnLaCobertura(int idDireccion);
+        int ObtengaIdBarrioDeDireccion(int idDireccion);
     }
 }

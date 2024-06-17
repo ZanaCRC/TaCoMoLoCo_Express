@@ -19,7 +19,7 @@ namespace TaCoMoLoCo_Express.DA
         public DbSet<Cobertura> Coberturas { get; set; }
         // Definiciones de otros DbSets...
 
-        
+        public DbSet<Plato> Platos { get; set; }
 
         public DbSet<Usuario> Usuario { get; set; }
 

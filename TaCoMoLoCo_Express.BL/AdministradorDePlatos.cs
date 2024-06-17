@@ -22,7 +22,7 @@ namespace TaCoMoLoCo_Express.BL
         {
 
             var platosDelRestaurante = ElContexto.Query<Plato>(
-                @"SELECT * FROM ""Platos"" WHERE @IdRestaurante",
+                @"SELECT * FROM ""Plato"" WHERE ""IdRestaurante"" = @IdRestaurante",
                 new { IdRestaurante = idRestaurante }
             ).ToList();
 
