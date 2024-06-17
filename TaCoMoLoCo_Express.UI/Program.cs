@@ -2,18 +2,22 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Npgsql;
 using Microsoft.EntityFrameworkCore;
 using TaCoMoLoCo_Express.BL;
+using TaCoMoLoCo_Express.DA;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<IAdministradorDeUsuarios, AdministradorDeUsuarios>();
-builder.Services.AddScoped<IAdministradorDePedidos, AdministradorDePedidos>();
-builder.Services.AddScoped<IAdministradorDePlatos, AdministradorDePlatos>();
 
 // Accede a la cadena de conexi�n
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddScoped<NpgsqlConnection>(sp => new NpgsqlConnection(connectionString));
+builder.Services.AddScoped<IAdministradorDeUsuarios, AdministradorDeUsuarios>();
+builder.Services.AddScoped<IAdministradorDePedidos, AdministradorDePedidos>();
+builder.Services.AddScoped<IAdministradorDePlatos, AdministradorDePlatos>();
+builder.Services.AddScoped<IAdministradorDeRestaurantes, AdministradorDeRestaurantes>();
+builder.Services.AddDbContext<DBContext>(options =>
+    options.UseNpgsql(connectionString));
 
 builder.Services.AddAuthentication(options =>
 {

@@ -9,6 +9,7 @@ namespace TaCoMoLoCo_Express.Model
 {
     public class Login
     {
+        public int Id { get; set; }
         public string Cedula { get; set; }
         public string Usuario { get; set; }
         public string Contrasena { get; set; }

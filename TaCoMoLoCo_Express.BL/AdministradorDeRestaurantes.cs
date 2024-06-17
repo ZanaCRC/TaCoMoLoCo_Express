@@ -16,9 +16,9 @@ namespace TaCoMoLoCo_Express.BL
             _contexto = contexto;
         }
 
-        public async Task<List<Restaurante>> ObtengaLaListaDeRestaurantes(string usuarioId)
+        public List<Restaurante> ObtengaLaListaDeRestaurantes(string usuarioId)
         {
-            // Define la consulta SQL explícita
+            
             var consultaSQL = @"
         SELECT r.*
         FROM public.""Restaurante"" r
@@ -27,10 +27,10 @@ namespace TaCoMoLoCo_Express.BL
         JOIN public.""Usuario"" u ON d.""Id"" = u.""IdDireccion""
         WHERE u.""Cedula"" = {0}";
 
-            // Ejecuta la consulta SQL utilizando FromSqlRaw y pasa el parámetro de cédula
-            var restaurantes = await _contexto.Restaurantes
+           
+            var restaurantes = _contexto.Restaurante
                 .FromSqlRaw(consultaSQL, usuarioId)
-                .ToListAsync();
+                .ToList();
 
             return restaurantes;
         }

@@ -53,7 +53,8 @@ namespace TaCoMoLoCo_Express.UI.Controllers
                         {
                             new Claim(ClaimTypes.Name, usuarioBuscado.Nombre1 + usuarioBuscado.Nombre2 + usuarioBuscado.Apellido1 + usuarioBuscado.Apellido2),
                             new Claim(ClaimTypes.Role, usuarioBuscado.IdRol.ToString()),
-                            new Claim(ClaimTypes.StreetAddress, usuarioBuscado.IdDireccion.ToString())
+                            new Claim(ClaimTypes.StreetAddress, usuarioBuscado.IdDireccion.ToString()),
+                            new Claim("CedulaUsuario", usuarioBuscado.Cedula)
 
                         };
                     ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

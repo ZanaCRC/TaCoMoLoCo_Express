@@ -10,8 +10,7 @@ namespace TaCoMoLoCo_Express.Model
 {
     public class Restaurante
     {
-        [Key]
-        public int IdRestaurante { get; set; }
+        public int Id { get; set; }
 
         [ForeignKey("Direccion")]
         public int IdDireccion { get; set; } 

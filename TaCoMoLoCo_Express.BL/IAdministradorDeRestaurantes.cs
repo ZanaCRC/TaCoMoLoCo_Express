@@ -9,7 +9,7 @@ namespace TaCoMoLoCo_Express.BL
 {
     public interface IAdministradorDeRestaurantes
     {
-       Task< List<Restaurante> >ObtengaLaListaDeRestaurantes(string usuarioId);
+        List<Restaurante> ObtengaLaListaDeRestaurantes(string usuarioId);
 
     }
 }

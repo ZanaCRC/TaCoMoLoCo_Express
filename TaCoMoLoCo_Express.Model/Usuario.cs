@@ -12,8 +12,6 @@ namespace TaCoMoLoCo_Express.Model
         public string Apellido1 { get; set; }
         public string Apellido2 { get; set; }
         public int IdDireccion { get; set; }
-
-        [ForeignKey("Rol")]
         public EnumRol IdRol { get; set; }
         public Rol Rol { get; set; }
 
