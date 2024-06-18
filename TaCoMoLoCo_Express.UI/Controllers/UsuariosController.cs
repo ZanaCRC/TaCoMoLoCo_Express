@@ -37,74 +37,69 @@ namespace TaCoMoLoCo_Express.UI.Controllers
                 ViewData["Mensaje"] = "Credenciales incorrectas";
                 return View();
             }
-                if (usuarioLogueo.Contrasena != ElAdministrador.GetContrasenaAPartirDeUsuario(usuarioLogueo.Usuario))
-                {
-                    ViewData["Mensaje"] = "Credenciales incorrectas";
-                    return View();
-                }
-                else
-                {
+            if (usuarioLogueo.Contrasena != ElAdministrador.GetContrasenaAPartirDeUsuario(usuarioLogueo.Usuario))
+            {
+                ViewData["Mensaje"] = "Credenciales incorrectas";
+                return View();
+            }
+            else
+            {
 
 
                 string cedulaDeQuienInicioSesion;
-                    cedulaDeQuienInicioSesion = ElAdministrador.BusqueUsuarioParaLogin(usuarioLogueo.Usuario).Cedula;
-                    Model.Usuario usuarioBuscado = ElAdministrador.BusqueUsuarioPorCedula(cedulaDeQuienInicioSesion);
-                    List<Claim> claims = new List<Claim>
+                cedulaDeQuienInicioSesion = ElAdministrador.BusqueUsuarioParaLogin(usuarioLogueo.Usuario).Cedula;
+                Model.Usuario usuarioBuscado = ElAdministrador.BusqueUsuarioPorCedula(cedulaDeQuienInicioSesion);
+                List<Claim> claims = new List<Claim>
                         {
                             new Claim(ClaimTypes.Name, usuarioBuscado.Nombre1 + usuarioBuscado.Nombre2 + usuarioBuscado.Apellido1 + usuarioBuscado.Apellido2),
                             new Claim(ClaimTypes.Role, usuarioBuscado.IdRol.ToString()),
                             new Claim(ClaimTypes.StreetAddress, usuarioBuscado.IdDireccion.ToString()),
                             new Claim("CedulaUsuario", usuarioBuscado.Cedula)
-                            
+
 
                         };
-                    ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    AuthenticationProperties prop = new AuthenticationProperties
-                    {
-                        IsPersistent = true,
-                        ExpiresUtc = DateTime.UtcNow.AddMinutes(20),
-                        AllowRefresh = true
-                    };
+                ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                AuthenticationProperties prop = new AuthenticationProperties
+                {
+                    IsPersistent = true,
+                    ExpiresUtc = DateTime.UtcNow.AddMinutes(20),
+                    AllowRefresh = true
+                };
 
-                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), prop);
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), prop);
 
                 var roleClaim = claimsIdentity.FindFirst(claimsIdentity.RoleClaimType);
 
                 if (roleClaim.Value == "Cliente")
-                    {
+                {
 
-                    int.TryParse(claimsIdentity.FindFirst(ClaimTypes.StreetAddress).Value, out int idDireccion);
+                    return RedirectToAction("Index", "MenuPlatos");
 
-                   // int idRestaurante = ElAdministrador.BusqueRestauranteEnLaCobertura(idDireccion);
-
-                    return RedirectToAction("Index", "Restaurantes", new { idDireccion = idDireccion });
-                    
-
-                    }
-
-
-                    else if (usuarioBuscado.IdRol == Model.EnumRol.Distribuidor)
-                    {
-                        /*return RedirectToAction("Index", "Cliente");*/
-                        ViewData["Mensaje"] = "Inicio de sesion correcto";
-
-                    }
-
-                    else if (usuarioBuscado.IdRol == Model.EnumRol.Repartidor)
-                    {
-                        /*return RedirectToAction("Index", "Cliente");*/
-                        ViewData["Mensaje"] = "Inicio de sesion correcto";
-
-                    }
-
-                    
                 }
-                return View();
 
-        
+
+                else if (usuarioBuscado.IdRol == Model.EnumRol.Distribuidor)
+                {
+                    /*return RedirectToAction("Index", "Cliente");*/
+                    ViewData["Mensaje"] = "Inicio de sesion correcto";
+
+                }
+
+                else if (usuarioBuscado.IdRol == Model.EnumRol.Repartidor)
+                {
+                    /*return RedirectToAction("Index", "Cliente");*/
+                    ViewData["Mensaje"] = "Inicio de sesion correcto";
+
+                }
+
+
+            }
+            return View();
+
+
         }
-    
-    
+
+
         // GET: UsuariosController/Details/5
         public ActionResult Details(int id)
         {

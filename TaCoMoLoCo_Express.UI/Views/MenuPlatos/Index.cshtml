@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <style>
-        body *{
+        body * {
             font-family: 'Poppins', sans-serif;
         }
 
@@ -64,16 +64,21 @@
                 <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/237/hamburger_1f354.png" class="mx-4 h-8 w-8" alt="">
             </div>
             <div class="grid grid-cols-9 gap-6 mt-12">
-                @foreach (var rest in ViewBag.Restaurantes)
-                {
-                    <div class="border rounded-full p-2 flex flex-col items-center shadow-xl cursor-pointer transition-colors duration-700 ease-in-out" style="background: @(rest.Id == ViewBag.ActiveCategory ? "yellow" : "white")">
-                <div class="border rounded-full p-2 bg-white">
-                <img class="h-12 w-12" src="/Imagenes//Restaurant.png" alt="si">
-                </div>
-                <p class="mt-3 mb-10 font-bold text-xs">@rest.Nombre</p>
-                </div>
-                }
+
+                    @foreach (var rest in ViewBag.Restaurantes)
+                    {
+                        <div class="border rounded-full p-2 flex flex-col items-center shadow-xl cursor-pointer transition-colors duration-700 ease-in-out"
+                             style="background: @(rest.Id == ViewBag.ActiveCategory ? "yellow" : "white")"
+                             onclick="seleccionarRestaurante(@rest.Id)">
+                            <div class="border rounded-full p-2 bg-white">
+                                <img class="h-12 w-12" src="/Imagenes/Restaurant.png" alt="si">
+                            </div>
+                            <p class="mt-3 mb-10 font-bold text-xs">@rest.Nombre</p>
+                        </div>
+                    }
                 
+               
+
                 <button class="h-10 rounded-lg self-center hover:shadow-xl flex justify-center items-center bg-gray-100 p-3 ml-auto">
                     <i class="fa fa-chevron-right"></i>
                 </button>
@@ -107,36 +112,11 @@
                 <div class="mt-8">
                     <p class="font-medium text-xl">Mi orden 😎</p>
                 </div>
-                <div class="mt-8 p-6 bg-purple-800 custom-rounded font-hairline text-xs">
-                    <div class="flex justify-between items-center">
-                        <p class="text-white">625 St Marks Ave</p>
-                        <p class="text-yellow-400 cursor-pointer">Edit</p>
-                    </div>
-                    <div class="flex items-center mt-4">
-                        
-                        <div class="rounded-lg px-2 py-1 timer">
-                            <i class="fa fa-clock text-yellow-400"></i>
-                        </div>
-                        <p class="text-white mx-3">35 min</p>
-                        <p class="text-yellow-400 cursor-pointer ml-auto">Choose time</p>
-                    </div>
+                <div id="cart-items" class="mt-8 p-6 bg-white custom-rounded font-hairline text-xs">
+                    <!-- Aquí se van a listar los items del carrito -->
                 </div>
-                @*@foreach (var item in ViewBag.CartItems)
-                {
-                <div class="grid grid-cols-4 gap-1 mb-5 @(item == ViewBag.CartItems.First() ? "mt-12" : "")">
-                <div class="h-10 rounded-lg" style="background-size: cover; background-repeat: no-repeat; background-image: url(/Imagenes/tres.jpg);"></div>
-                <div class="col-span-2 grid grid-cols-3 text-xxs font-semibold">
-                <p class="flex justify-center items-center">@item.Quantity <span class="ml-1">x</span></p>
-                <p class="col-span-2 flex items-center">@item.Nombre</p>
-                </div>
-                <div class="flex justify-end items-center text-gray-600 font-hairline text-xs">
-                $@item.Precio
-                </div>
-                </div>
-                } *@
                 <div class="grid grid-cols-4 gap-1 mb-5 mt-10">
                     <div class="h-10 rounded-lg  flex items-center px-0" style="background-color: rgba(255, 165, 0, 0.5); color: #feebc4;">
-                        
                         <i class="fa fa-car m-auto" style="color: rgba(255, 165, 0, 0.5); color: #ed8936;"></i>
                     </div>
                     <div class="col-span-2 grid grid-cols-2 text-xxs font-semibold">
@@ -146,21 +126,156 @@
                         $0.00
                     </div>
                 </div>
-
             </div>
             <div class="flex-grow flex flex-col justify-end pl-6 pr-6">
                 <div class="flex justify-between items-center border-b-2 pb-2">
                     <span>Total:</span>
-                    <span class="text-xl font-medium">$@ViewBag.Total</span>
+                    <span class="text-xl font-medium">$<span id="total-price">0.00</span></span>
                 </div>
                 <div class="flex justify-end pt-4  font-bold">
-                    <div class="ml-auto bg-yellow-400 p-6 rounded-lg cursor-pointer flex items-center justify-center flex-grow">
+                    <div class="ml-auto bg-yellow-400 p-6 rounded-lg cursor-pointer flex items-center justify-center flex-grow" onclick="checkout()">
                         Checkout <i class="ml-6 fa fa-arrow-right"></i>
                     </div>
                 </div>
             </div>
+        </div>
 
         </div>
     </div>
 </body>
 </html>
+
+<script>
+    function seleccionarRestaurante(restauranteId) {
+        // Cambiar el color del restaurante seleccionado
+        var restauranteSeleccionado = document.querySelector(`.flex[data-restaurante-id="${restauranteId}"]`);
+
+        // Verificar si se encontró el restaurante antes de intentar cambiar el estilo
+        if (restauranteSeleccionado) {
+            // Resetear todos los colores de los restaurantes
+            document.querySelectorAll('.flex[data-restaurante-id]').forEach(item => {
+                item.style.background = 'white';
+            });
+
+            // Cambiar color del restaurante seleccionado
+            restauranteSeleccionado.style.background = 'yellow';
+        }
+
+        // Hacer una petición al servidor para obtener los platos del restaurante
+        fetch(`/MenuPlatos/ObtenerPlatosPorIdRestaurante?idRestaurante=${restauranteId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('No se pudo obtener la respuesta del servidor');
+                }
+                return response.json(); // Convertir la respuesta a JSON
+            })
+            .then(data => {
+                // Verificar si recibes datos válidos
+                if (data && data.length > 0) {
+                    renderizarPlatos(data); // Renderizar los platos en la interfaz de usuario
+                } else {
+                    console.log('No se encontraron platos para el restaurante seleccionado');
+                }
+            })
+            .catch(error => console.error('Error al obtener los platos:', error));
+    }
+
+    function renderizarPlatos(platos) {
+        // Limpiar el contenedor actual de platos
+        var contenedorPlatos = document.querySelector('.grid.grid-cols-3.gap-10');
+        contenedorPlatos.innerHTML = '';
+
+        // Renderizar los nuevos platos
+        platos.forEach(plato => {
+            var platoHTML = `
+                    <div class="flex flex-col">
+                        <div class="shadow-lg relative h-40 custom-rounded" style="background-size: cover; background-repeat: no-repeat; background-image: url(/Imagenes/tres.jpg);">
+                            <div class="absolute bottom-0 left-0 w-1/3 bg-gray-200 custom-tr-rounded p-2 text-center text-xs">
+                                <span class="font-bold">10</span> min
+                            </div>
+                        </div>
+                        <p class="mt-4 font-medium">${plato.nombre}</p>
+                        <div class="mt-2 flex items-center">
+                            
+                            <span class="text-gray-600 font-hairline text-xs mx-4">${plato.idCategoria}</span>
+                            <span class="text-gray-600 font-hairline text-xs mx-4">${plato.descripcion}</span>
+                            <span class="text-gray-600 font-hairline text-xs mx-4">${plato.precio}</span>
+                                 <button onclick="addToCart(${plato.id})" class="bg-blue-500 text-white rounded mt-4 p-2">Comprar</button>
+                        </div>
+                    </div>`;
+            contenedorPlatos.innerHTML += platoHTML;
+        });
+    }
+
+</script>
+
+<script>
+    // Variable global para mantener el estado del carrito
+    let cart = [];
+
+    // Función para agregar un plato al carrito
+    function addToCart(platoId) {
+        fetch(`/MenuPlatos/ObtenerPlato?id=${platoId}`)
+            .then(response => response.json())
+            .then(plato => {
+                // Chequear si el plato ya está en el carrito
+                const existingItem = cart.find(item => item.id === plato.id);
+                if (existingItem) {
+                    existingItem.quantity++;
+                } else {
+                    cart.push({ ...plato, quantity: 1 });
+                }
+                renderCartItems();
+                updateTotalPrice();
+            })
+            .catch(error => console.error('Error al agregar el plato al carrito:', error));
+    }
+
+    // Función para renderizar los items del carrito en el HTML
+    function renderCartItems() {
+        const cartItemsContainer = document.getElementById('cart-items');
+
+        cartItemsContainer.innerHTML = '';
+
+        cart.forEach((item, index) => {
+            const itemHTML = `
+                <div class="grid grid-cols-4 gap-1 mb-5 ${index === 0 ? 'mt-3' : ''}">
+                    <div class="h-10 rounded-lg" style="background-size: cover; background-repeat: no-repeat; background-image: url(/Imagenes/tres.jpg);"></div>
+                    <div class="col-span-2 grid grid-cols-3 text-xxs font-semibold">
+                        <p class="flex justify-center items-center">1 x</p>
+                        <p class="col-span-2 flex items-center">${item.nombre}</p>
+                    </div>
+                    <div class="flex justify-end items-center text-gray-600 font-hairline text-xs">
+                        $${(item.precio * 1).toFixed(2)}
+                    </div>
+                </div>
+            `;
+            cartItemsContainer.innerHTML += itemHTML;
+        });
+    }
+
+
+    // Función para remover un item del carrito
+    function removeFromCart(platoId) {
+        cart = cart.filter(item => item.id !== platoId);
+        renderCartItems();
+        updateTotalPrice();
+    }
+
+    // Función para actualizar el precio total
+    function updateTotalPrice() {
+        const totalPrice = cart.reduce((total, item) => total + item.precio * item.quantity, 0);
+        document.getElementById('total-price').innerText = totalPrice.toFixed(2);
+    }
+
+    // Función de Checkout (simulación)
+    function checkout() {
+        alert('Compra realizada con éxito!');
+        cart = [];
+        renderCartItems();
+        updateTotalPrice();
+    }
+</script>
+
+
+

@@ -18,7 +18,7 @@ namespace TaCoMoLoCo_Express.BL
             ElContexto = contexto;
         }
 
-        public List<Plato> ObtengaLaListaDePlatos(int idRestaurante)
+        public List<Plato> ObtengaLaListaDePlatosDeUnRestaurante(int idRestaurante)
         {
 
             var platosDelRestaurante = ElContexto.Query<Plato>(
@@ -32,7 +32,7 @@ namespace TaCoMoLoCo_Express.BL
         public Plato ObtengaElPlato(int id)
         {
             var plato = ElContexto.QueryFirstOrDefault<Plato>(
-                @"SELECT * FROM ""Platos"" WHERE ""Id"" = @idPlato",
+                @"SELECT * FROM ""Plato"" WHERE ""Id"" = @idPlato",
                 new { idPlato = id }
             );
 

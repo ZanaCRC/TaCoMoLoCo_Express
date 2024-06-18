@@ -16,9 +16,9 @@ namespace TaCoMoLoCo_Express.UI.Controllers
         // GET: RestaurantesController
         public ActionResult Index(int idDireccion)
         {
-           // string Cedula = User.Claims.FirstOrDefault(c => c.Type == "CedulaUsuario").Value.ToString();
+           string Cedula = User.Claims.FirstOrDefault(c => c.Type == "CedulaUsuario").Value.ToString();
             
-            List<Restaurante> restaurantes = ElAdministrador.BusqueRestaurantesEnUnaZona(idDireccion);
+            List<Restaurante> restaurantes = ElAdministrador.ObtengaLaListaDeRestaurantes(Cedula);
             return View(restaurantes);
         }
 

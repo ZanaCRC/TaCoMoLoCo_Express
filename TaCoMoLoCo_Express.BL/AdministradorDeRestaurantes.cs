@@ -18,18 +18,25 @@ namespace TaCoMoLoCo_Express.BL
             _contexto = contexto;
         }
 
-        public List<Restaurante> BusqueRestaurantesEnUnaZona(int idDireccion)
+        public List<Restaurante> ObtengaLaListaDeRestaurantes(string usuarioId)
         {
-            int idBarrio = ObtengaIdBarrioDeDireccion(idDireccion);
-            List<Restaurante> restaurantes = _connection.Query<Restaurante>(
-                @"SELECT r.""Id"", r.""IdDireccion"", r.""Nombre"", r.""Comision""
-          FROM ""Coberturas"" c
-          JOIN ""Restaurante"" r ON c.""IdRestaurante"" = r.""Id""
-          WHERE c.""IdBarrio"" = @IdBarrio;",
-                new { IdBarrio = idBarrio }
-            ).ToList();
+
+            var consultaSQL = @"
+        SELECT r.*
+        FROM public.""Restaurante"" r
+        JOIN public.""Coberturas"" c ON r.""Id"" = c.""IdRestaurante""
+        JOIN public.""Direccion"" d ON c.""IdBarrio"" = d.""IdBarrio""
+        JOIN public.""Usuario"" u ON d.""Id"" = u.""IdDireccion""
+        WHERE u.""Cedula"" = {0}";
+
+
+            var restaurantes = _contexto.Restaurante
+                .FromSqlRaw(consultaSQL, usuarioId)
+                .ToList();
+
             return restaurantes;
         }
+
 
         public int ObtengaIdBarrioDeDireccion(int idDireccion)
         {

@@ -18,29 +18,60 @@ namespace TaCoMoLoCo_Express.UI.Controllers
         }
 
         // GET: MenuPlatosController
-        public ActionResult Index(int idRestaurante)
+        public ActionResult Index()
         {
-            List<Model.Plato> losPlatos;
-            losPlatos = ElAdministrador.ObtengaLaListaDePlatos(idRestaurante);
+            List<Model.Plato> losPlatos = new List<Plato>();
+            List<Restaurante> restaurantesDisponiblesEnEsaDireccion;
+            restaurantesDisponiblesEnEsaDireccion = ElAdministradorDeRestaurantes.ObtengaLaListaDeRestaurantes(User.Claims.FirstOrDefault(c => c.Type == "CedulaUsuario").Value.ToString());
+            ViewBag.Restaurantes = restaurantesDisponiblesEnEsaDireccion;
+
+            foreach (var restaurante in restaurantesDisponiblesEnEsaDireccion)
+            {
+                losPlatos.AddRange(ElAdministrador.ObtengaLaListaDePlatosDeUnRestaurante(restaurante.Id));
+            }
+
             return View(losPlatos);
 
         }
 
-       /* [HttpPost]
-        public ActionResult AgregarAlCarrito(int platoId)
+        public IActionResult ObtenerPlato(int id)
         {
-            var plato = ElAdministrador.ObtengaElPlato(platoId);
+            var plato = ElAdministrador.ObtengaElPlato(id);
             if (plato != null)
             {
-                // Recuperar el carrito de la sesión o crear uno nuevo si no existe
-                var carrito = HttpContext.Session.Get<List<Plato>>("Carrito") ?? new List<Plato>();
-                carrito.Add(plato);
-                HttpContext.Session.Set("Carrito", carrito);
+                return Json(plato);
             }
-            // Redirige a la acción Index del controlador actual después de agregar al carrito
-            return RedirectToAction(nameof(Index));
+            return NotFound();
         }
-       */
+
+
+        public IActionResult ObtenerPlatosPorIdRestaurante(int idRestaurante)
+        {
+            List<Model.Plato> losPlatos;
+
+            // Obtener los platos del restaurante seleccionado
+            losPlatos = ElAdministrador.ObtengaLaListaDePlatosDeUnRestaurante(idRestaurante);
+
+            // Devolver los platos como JSON
+            return Json(losPlatos);
+        }
+
+
+        /* [HttpPost]
+         public ActionResult AgregarAlCarrito(int platoId)
+         {
+             var plato = ElAdministrador.ObtengaElPlato(platoId);
+             if (plato != null)
+             {
+                 // Recuperar el carrito de la sesión o crear uno nuevo si no existe
+                 var carrito = HttpContext.Session.Get<List<Plato>>("Carrito") ?? new List<Plato>();
+                 carrito.Add(plato);
+                 HttpContext.Session.Set("Carrito", carrito);
+             }
+             // Redirige a la acción Index del controlador actual después de agregar al carrito
+             return RedirectToAction(nameof(Index));
+         }
+        */
         // GET: MenuPlatosController/Details/5
         public ActionResult Details(int id)
         {
