@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using Npgsql;
 using System;
 using System.Collections.Generic;
@@ -140,24 +141,40 @@ namespace TaCoMoLoCo_Express.BL
             return usuario;
         }
 
-
-        public int BusqueRestauranteEnLaCobertura(int idDireccion)
+        public List<Canton> BuscarCantonesPorIdProvincia(int idProvincia)
         {
-            int idBarrio = ObtengaIdBarrioDeDireccion(idDireccion);
-            int idrestaurante = _connection.QueryFirstOrDefault<int>(
-     @"SELECT ""IdRestaurante"" FROM ""Coberturas"" WHERE ""IdBarrio"" = @IdBarrio;",
-    new { IdBarrio = idBarrio }
-);
-            return idrestaurante;
+            var cantones = _connection.Query<Canton>(
+                @"SELECT * FROM ""Canton"" WHERE ""IdProvincia"" = @IdProvincia;",
+                new { IdProvincia = idProvincia }
+            ).ToList();
+
+            return cantones;
+        }
+
+       
+
+
+             public List<Distrito> BuscarDistritosPorIdCanton(int IdCanton)
+        {
+            var Distritos = _connection.Query<Distrito>(
+                @"SELECT * FROM ""Distrito"" WHERE ""IdCanton"" = @IdCan;",
+                new { IdCan = IdCanton }
+            ).ToList();
+
+            return Distritos;
+        }
+
+        public List<Barrio> BuscarBarriosPorIdDistrito(int idDistrito)
+        {
+            var barrios = _connection.Query<Barrio>(
+                @"SELECT * FROM ""Barrio"" WHERE ""IdDistrito"" = @IdDistrito;",
+                new { IdDistrito = idDistrito }
+            ).ToList();
+
+            return barrios;
         }
 
 
-        public int ObtengaIdBarrioDeDireccion(int idDireccion)
-        {
-            int idBarrio = _connection.QueryFirstOrDefault<int>(
-            @"SELECT ""IdBarrio"" FROM ""Direccion"" WHERE ""Id"" = @IdDireccion;", new { IdDireccion = idDireccion});
 
-            return idBarrio;
-        }
     }
 }

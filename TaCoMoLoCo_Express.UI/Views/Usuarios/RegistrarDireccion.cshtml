@@ -1,0 +1,129 @@
+﻿@model TaCoMoLoCo_Express.Model.Direccion
+
+@{
+    ViewData["Title"] = "RegistrarDireccion";
+}
+
+<h1>RegistrarDireccion</h1>
+
+<h4>Direccion</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="RegistrarDireccion" id="direccionForm">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="IdProvincia" class="control-label"></label>
+                <select asp-for="IdProvincia" asp-items="Html.GetEnumSelectList<TaCoMoLoCo_Express.Model.EnumProvincia>()"></select>
+                <span asp-validation-for="IdProvincia" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="IdCanton" class="control-label"></label>
+                <select asp-for="IdCanton" id="IdCanton" class="form-control">
+                    <option value="">Seleccione Cantón</option>
+                </select>
+                <span asp-validation-for="IdCanton" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="IdDistrito" class="control-label"></label>
+                <select asp-for="IdDistrito" id="IdDistrito" class="form-control">
+                    <option value="">Seleccione Distrito</option>
+                </select>
+                <span asp-validation-for="IdDistrito" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="IdBarrio" class="control-label"></label>
+                <select asp-for="IdBarrio" id="IdBarrio" class="form-control">
+                    <option value="">Seleccione Barrio</option>
+                </select>
+                <span asp-validation-for="IdBarrio" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Registrar Dirección</button>
+        </form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#IdProvincia').change(function () {
+            var provinciaId = $(this).val();
+            if (provinciaId) {
+                // Cargar cantones
+                $.ajax({
+                    url: '/Usuarios/ObtenerCantones',
+                    type: 'GET',
+                    data: { provinciaId: provinciaId },
+                    success: function (response) {
+                        $('#IdCanton').empty();
+                        $('#IdCanton').append($('<option>').text('Seleccione Cantón').attr('value', ''));
+                        $.each(response, function (index, canton) {
+                            $('#IdCanton').append($('<option>').text(canton.nombre).attr('value', canton.id));
+                        });
+                    },
+                    error: function () {
+                        console.error('Error al obtener cantones');
+                    }
+                });
+            } else {
+                $('#IdCanton').empty();
+                $('#IdDistrito').empty();
+                $('#IdBarrio').empty();
+            }
+        });
+
+        $('#IdCanton').change(function () {
+            var cantonId = $(this).val();
+            if (cantonId) {
+                // Cargar distritos
+                $.ajax({
+                    url: '/Usuarios/ObtenerDistritos',
+                    type: 'GET',
+                    data: { cantonId: cantonId },
+                    success: function (response) {
+                        $('#IdDistrito').empty();
+                        $('#IdDistrito').append($('<option>').text('Seleccione Distrito').attr('value', ''));
+                        $.each(response, function (index, distrito) {
+                            $('#IdDistrito').append($('<option>').text(distrito.nombre).attr('value', distrito.id));
+                        });
+                    },
+                    error: function () {
+                        console.error('Error al obtener distritos');
+                    }
+                });
+            } else {
+                $('#IdDistrito').empty();
+                $('#IdBarrio').empty();
+            }
+        });
+
+        $('#IdDistrito').change(function () {
+            var distritoId = $(this).val();
+            if (distritoId) {
+                // Cargar barrios
+                $.ajax({
+                    url: '/Usuarios/ObtenerBarrios',
+                    type: 'GET',
+                    data: { distritoId: distritoId },
+                    success: function (response) {
+                        $('#IdBarrio').empty();
+                        $('#IdBarrio').append($('<option>').text('Seleccione Barrio').attr('value', ''));
+                        $.each(response, function (index, barrio) {
+                            $('#IdBarrio').append($('<option>').text(barrio.nombre).attr('value', barrio.id));
+                        });
+                    },
+                    error: function () {
+                        console.error('Error al obtener barrios');
+                    }
+                });
+            } else {
+                $('#IdBarrio').empty();
+            }
+        });
+    });
+</script>

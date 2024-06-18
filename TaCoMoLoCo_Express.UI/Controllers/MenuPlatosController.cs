@@ -21,9 +21,6 @@ namespace TaCoMoLoCo_Express.UI.Controllers
         public ActionResult Index(int idRestaurante)
         {
             List<Model.Plato> losPlatos;
-            List<Restaurante> restaurantesDisponiblesEnEsaDireccion;
-            restaurantesDisponiblesEnEsaDireccion = ElAdministradorDeRestaurantes.ObtengaLaListaDeRestaurantes(User.Claims.FirstOrDefault(c => c.Type == "CedulaUsuario").Value.ToString());
-            ViewBag.Restaurantes = restaurantesDisponiblesEnEsaDireccion;
             losPlatos = ElAdministrador.ObtengaLaListaDePlatos(idRestaurante);
             return View(losPlatos);
 

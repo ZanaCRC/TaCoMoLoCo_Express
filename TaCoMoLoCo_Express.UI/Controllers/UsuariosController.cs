@@ -75,9 +75,9 @@ namespace TaCoMoLoCo_Express.UI.Controllers
 
                     int.TryParse(claimsIdentity.FindFirst(ClaimTypes.StreetAddress).Value, out int idDireccion);
 
-                    int idRestaurante = ElAdministrador.BusqueRestauranteEnLaCobertura(idDireccion);
+                   // int idRestaurante = ElAdministrador.BusqueRestauranteEnLaCobertura(idDireccion);
 
-                    return RedirectToAction("Index", "MenuPlatos", new { IdRestaurante = idRestaurante });
+                    return RedirectToAction("Index", "Restaurantes", new { idDireccion = idDireccion });
                     
 
                     }
@@ -112,15 +112,17 @@ namespace TaCoMoLoCo_Express.UI.Controllers
         }
 
         // GET: UsuariosController/Create
-        public ActionResult Create()
+        public ActionResult RegistrarDireccion()
         {
             return View();
         }
+      
 
+       
         // POST: UsuariosController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult RegistrarDireccion(IFormCollection collection)
         {
             try
             {
@@ -130,6 +132,45 @@ namespace TaCoMoLoCo_Express.UI.Controllers
             {
                 return View();
             }
+        }
+
+        [HttpGet]
+        public IActionResult ObtenerCantones(int provinciaId)
+        {
+            
+            var cantones = ElAdministrador.BuscarCantonesPorIdProvincia(provinciaId);
+
+            
+            return Json(cantones);
+        }
+
+        [HttpGet]
+        public IActionResult ObtenerDistritos(int cantonId)
+        {
+            var distritos = ElAdministrador.BuscarDistritosPorIdCanton(cantonId);
+
+            // Mapear los datos a objetos anónimos para evitar problemas de referencia circular
+            var result = distritos.Select(d => new {
+                id = d.Id,
+                nombre = d.Nombre
+            });
+
+            return Json(result);
+        }
+
+        // Acción para obtener los barrios de un distrito
+        [HttpGet]
+        public IActionResult ObtenerBarrios(int distritoId)
+        {
+            var barrios = ElAdministrador.BuscarBarriosPorIdDistrito(distritoId);
+
+            // Mapear los datos a objetos anónimos para evitar problemas de referencia circular
+            var result = barrios.Select(b => new {
+                id = b.Id,
+                nombre = b.Nombre
+            });
+
+            return Json(result);
         }
 
 

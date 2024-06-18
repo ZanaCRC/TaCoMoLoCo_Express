@@ -14,11 +14,12 @@ namespace TaCoMoLoCo_Express.BL
         public bool YaPoseeUnaCuenta(string cedula);
         public void InsertarUsuario(string cedula, string nombre1, string nombre2, string apellido1, string apellido2, int idRol);
         public int VerifiqueElRol(Usuario usuario);
-        public void InsertarLogin( string cedula, string usuario, string contrasenia);
+        public void InsertarLogin(string cedula, string usuario, string contrasenia);
         public Login BusqueUsuarioParaLogin(string nombreUsuario);
         public Usuario BusqueUsuarioPorCedula(string cedula);
 
-        int BusqueRestauranteEnLaCobertura(int idDireccion);
-        int ObtengaIdBarrioDeDireccion(int idDireccion);
+        public List<Canton> BuscarCantonesPorIdProvincia(int idProvincia);
+        public List<Distrito> BuscarDistritosPorIdCanton(int IdCanton);
+        public List<Barrio> BuscarBarriosPorIdDistrito(int idDistrito);
     }
 }

@@ -9,7 +9,8 @@ namespace TaCoMoLoCo_Express.BL
 {
     public interface IAdministradorDeRestaurantes
     {
-        List<Restaurante> ObtengaLaListaDeRestaurantes(string usuarioId);
-
+    
+        public List<Restaurante> BusqueRestaurantesEnUnaZona(int idDireccion);
+        public int ObtengaIdBarrioDeDireccion(int idDireccion);
     }
 }
