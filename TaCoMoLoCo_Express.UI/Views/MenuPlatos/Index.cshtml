@@ -148,24 +148,6 @@
     </div>
 </body>
 
-<script>
-    function addToCart(platoId) {
-        fetch(`/MenuPlatos/ObtenerPlato?id=${platoId}`)
-            .then(response => response.json())
-            .then(plato => {
-                // Chequear si el plato ya está en el carrito
-                const existingItem = cart.find(item => item.id === plato.id);
-                if (existingItem) {
-                    existingItem.quantity++;
-                } else {
-                    cart.push({ ...plato, quantity: 1 });
-                }
-                renderCartItems();
-                updateTotalPrice();
-            })
-            .catch(error => console.error('Error al agregar el plato al carrito:', error));
-    }
-</script>
 </html>
 
 <script>
@@ -201,6 +183,22 @@
                 }
             })
             .catch(error => console.error('Error al obtener los platos:', error));
+    }
+    function addToCart(platoId) {
+        fetch(`/MenuPlatos/ObtenerPlato?id=${platoId}`)
+            .then(response => response.json())
+            .then(plato => {
+                // Chequear si el plato ya está en el carrito
+                const existingItem = cart.find(item => item.id === plato.id);
+                if (existingItem) {
+                    existingItem.quantity++;
+                } else {
+                    cart.push({ ...plato, quantity: 1 });
+                }
+                renderCartItems();
+                updateTotalPrice();
+            })
+            .catch(error => console.error('Error al agregar el plato al carrito:', error));
     }
 
     function renderizarPlatos(platos) {
@@ -267,7 +265,25 @@
 
     // Función para remover un item del carrito
     function removeFromCart(platoId) {
-        cart = cart.filter(item => item.id !== platoId);
+       
+        
+        
+        fetch(`/MenuPlatos/ObtenerPlato?id=${platoId}`)
+            .then(response => response.json())
+            .then(plato => {
+                // Chequear si el plato ya está en el carrito
+                const existingItem = cart.find(item => item.id === plato.id);
+                if (existingItem.quantity) {
+                    existingItem.quantity--;
+                } else {
+                    cart = cart.filter(item => item.id !== platoId);
+                }
+                renderCartItems();
+                updateTotalPrice();
+            })
+            .catch(error => console.error('Error al agregar el plato al carrito:', error));
+        
+
         renderCartItems();
         updateTotalPrice();
     }
