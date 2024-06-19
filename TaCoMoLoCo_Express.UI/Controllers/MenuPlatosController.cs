@@ -41,9 +41,9 @@ namespace TaCoMoLoCo_Express.UI.Controllers
         {
             // Almacenar el carrito en TempData
             TempData["Carrito"] = Newtonsoft.Json.JsonConvert.SerializeObject(carrito);
-
-            // Redireccionar a la acción de confirmación de compra
-            return RedirectToAction("ConfirmacionCompra");
+            return Json(new { success = true});
+            
+         
         }
 
 

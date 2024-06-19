@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddSession();
 // Accede a la cadena de conexi�n
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddScoped<NpgsqlConnection>(sp => new NpgsqlConnection(connectionString));
@@ -32,6 +32,7 @@ builder.Services.AddAuthentication(options =>
     options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
 });
 
+
 var app = builder.Build();
 
 
@@ -51,6 +52,7 @@ app.UseRouting();
 app.UseAuthentication();
 
 app.UseAuthorization();
+app.UseSession();
 
 //app.UseSession();
 
