@@ -256,6 +256,8 @@
                     <div class="flex justify-end items-center text-gray-600 font-hairline text-xs">
                         $${(item.precio * item.quantity).toFixed(2)}
                     </div>
+                        <button onclick="removeFromCart(${item.id})" class="ml-auto bg-red-500 p-1 rounded text-white text-xs">X</button>
+
                 </div>
             `;
             cartItemsContainer.innerHTML += itemHTML;
