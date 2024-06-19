@@ -7,22 +7,19 @@ using System.Threading.Tasks;
 
 namespace TaCoMoLoCo_Express.Model
 {
-    public class Plato
+    public class ProductoCarrito
     {
         public int Id { get; set; }
 
-        [ForeignKey("Restaurante")]
         public int IdRestaurante { get; set; }
 
-        [ForeignKey("Categoria")]
         public int IdCategoria { get; set; }
 
         public Categoria Categoria { get; set; }
         public string Nombre { get; set; }
         public string Descripcion { get; set; }
         public decimal Precio { get; set; }
-        
-       //public byte[] Imagen { get; set; }
-        
+        public int Cantidad { get; set; }
+      
     }
 }

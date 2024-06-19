@@ -230,6 +230,38 @@
         });
     }
 
+    function checkout() {
+        fetch('/MenuPlatos/ProcesarCarrito', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(cart.map(item => ({
+                Id: item.id,
+                IdRestaurante: item.idRestaurante, // Asegúrate de tener esta propiedad en tus objetos del carrito
+                IdCategoria: item.idCategoria,
+                Nombre: item.nombre,
+                Descripcion: item.descripcion,
+                Precio: item.precio,
+                Cantidad: item.quantity
+            }))),
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('No se pudo enviar el carrito al servidor.');
+            })
+            .then(() => {
+                alert('Compra realizada con éxito!');
+                cart = [];
+                renderCartItems();
+                updateTotalPrice();
+                // Opcional: Redirigir a la página de confirmación o actualizar la vista actual
+            })
+            .catch(error => console.error('Error al enviar el carrito:', error));
+    }
+
 </script>
 
 <script>
@@ -294,13 +326,7 @@
         document.getElementById('total-price').innerText = totalPrice.toFixed(2);
     }
 
-    // Función de Checkout (simulación)
-    function checkout() {
-        alert('Compra realizada con éxito!');
-        cart = [];
-        renderCartItems();
-        updateTotalPrice();
-    }
+    
 </script>
 
 

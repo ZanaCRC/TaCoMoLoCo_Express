@@ -31,8 +31,34 @@ namespace TaCoMoLoCo_Express.UI.Controllers
                 losPlatos.AddRange(ElAdministrador.ObtengaLaListaDePlatosDeUnRestaurante(restaurante.Id));
             }
 
+
             return View(losPlatos);
 
+        }
+
+        [HttpPost]
+        public IActionResult ProcesarCarrito([FromBody] List<ProductoCarrito> carrito)
+        {
+            // Almacenar el carrito en TempData
+            TempData["Carrito"] = Newtonsoft.Json.JsonConvert.SerializeObject(carrito);
+
+            // Redireccionar a la acción de confirmación de compra
+            return RedirectToAction("ConfirmacionCompra");
+        }
+
+
+        public IActionResult ConfirmacionCompra()
+        {
+            // Leer el carrito desde TempData
+            var carritoJson = TempData["Carrito"] as string;
+            List<ProductoCarrito> carrito = null;
+            if (!string.IsNullOrEmpty(carritoJson))
+            {
+                carrito = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ProductoCarrito>>(carritoJson);
+            }
+
+            // Pasar el carrito a la vista
+            return View(carrito);
         }
 
         public IActionResult ObtenerPlato(int id)

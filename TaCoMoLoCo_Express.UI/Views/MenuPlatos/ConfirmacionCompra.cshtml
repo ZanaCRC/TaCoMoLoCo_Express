@@ -1,0 +1,17 @@
+﻿@model List<TaCoMoLoCo_Express.Model.ProductoCarrito>
+
+<h2>Confirmación de Compra</h2>
+
+@if (Model != null && Model.Any())
+{
+    <ul>
+        @foreach (var item in Model)
+        {
+            <li>@item.Nombre - @item.Cantidad x @item.Precio.ToString("C")</li>
+        }
+    </ul>
+}
+else
+{
+    <p>No hay productos en el carrito.</p>
+}
