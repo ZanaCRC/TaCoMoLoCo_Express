@@ -93,11 +93,15 @@
                             </div>
                         </div>
                         <p class="mt-4 font-medium">@food.Nombre</p>
-                        <div class="mt-2 flex items-center">
-                            <span class="text-xs"><i class="fa fa-star"></i> 5</span>
+                        <div class="mt-2 flex items-center justify-between">
+
                             <span class="text-gray-600 font-hairline text-xs mx-4">@food.IdCategoria</span>
                             <span class="text-gray-600 font-hairline text-xs mx-4">@food.Descripcion</span>
                             <span class="text-gray-600 font-hairline text-xs mx-4">@food.Precio</span>
+                            <span>
+                                <button onclick="addToCart(@food.Id)" class="bg-blue-500 text-white rounded p-2 ml-auto">Comprar</button>
+                            </span>
+                             
                         </div>
                     </div>
                 }
@@ -143,6 +147,25 @@
         </div>
     </div>
 </body>
+
+<script>
+    function addToCart(platoId) {
+        fetch(`/MenuPlatos/ObtenerPlato?id=${platoId}`)
+            .then(response => response.json())
+            .then(plato => {
+                // Chequear si el plato ya está en el carrito
+                const existingItem = cart.find(item => item.id === plato.id);
+                if (existingItem) {
+                    existingItem.quantity++;
+                } else {
+                    cart.push({ ...plato, quantity: 1 });
+                }
+                renderCartItems();
+                updateTotalPrice();
+            })
+            .catch(error => console.error('Error al agregar el plato al carrito:', error));
+    }
+</script>
 </html>
 
 <script>
@@ -189,18 +212,20 @@
         platos.forEach(plato => {
             var platoHTML = `
                     <div class="flex flex-col">
-                        <div class="shadow-lg relative h-40 custom-rounded" style="background-size: cover; background-repeat: no-repeat; background-image: url(/Imagenes/tres.jpg);">
+                            <div class="shadow-lg relative h-40 custom-rounded" style="background-size: cover; background-repeat: no-repeat; background-image: url(/Imagenes/tres.jpg);">
                             <div class="absolute bottom-0 left-0 w-1/3 bg-gray-200 custom-tr-rounded p-2 text-center text-xs">
                                 <span class="font-bold">10</span> min
                             </div>
                         </div>
                         <p class="mt-4 font-medium">${plato.nombre}</p>
-                        <div class="mt-2 flex items-center">
+                            <div class="mt-2 flex items-center justify-between">
                             
                             <span class="text-gray-600 font-hairline text-xs mx-4">${plato.idCategoria}</span>
                             <span class="text-gray-600 font-hairline text-xs mx-4">${plato.descripcion}</span>
                             <span class="text-gray-600 font-hairline text-xs mx-4">${plato.precio}</span>
-                                 <button onclick="addToCart(${plato.id})" class="bg-blue-500 text-white rounded mt-4 p-2">Comprar</button>
+                            <span>
+                                 <button onclick="addToCart(${plato.id})" class="bg-blue-500 text-white rounded p-2 ml-auto">Comprar</button>
+                            </span>
                         </div>
                     </div>`;
             contenedorPlatos.innerHTML += platoHTML;
@@ -213,23 +238,6 @@
     // Variable global para mantener el estado del carrito
     let cart = [];
 
-    // Función para agregar un plato al carrito
-    function addToCart(platoId) {
-        fetch(`/MenuPlatos/ObtenerPlato?id=${platoId}`)
-            .then(response => response.json())
-            .then(plato => {
-                // Chequear si el plato ya está en el carrito
-                const existingItem = cart.find(item => item.id === plato.id);
-                if (existingItem) {
-                    existingItem.quantity++;
-                } else {
-                    cart.push({ ...plato, quantity: 1 });
-                }
-                renderCartItems();
-                updateTotalPrice();
-            })
-            .catch(error => console.error('Error al agregar el plato al carrito:', error));
-    }
 
     // Función para renderizar los items del carrito en el HTML
     function renderCartItems() {
@@ -242,11 +250,11 @@
                 <div class="grid grid-cols-4 gap-1 mb-5 ${index === 0 ? 'mt-3' : ''}">
                     <div class="h-10 rounded-lg" style="background-size: cover; background-repeat: no-repeat; background-image: url(/Imagenes/tres.jpg);"></div>
                     <div class="col-span-2 grid grid-cols-3 text-xxs font-semibold">
-                        <p class="flex justify-center items-center">1 x</p>
+                        <p class="flex justify-center items-center">${item.quantity}x</p>
                         <p class="col-span-2 flex items-center">${item.nombre}</p>
                     </div>
                     <div class="flex justify-end items-center text-gray-600 font-hairline text-xs">
-                        $${(item.precio * 1).toFixed(2)}
+                        $${(item.precio * item.quantity).toFixed(2)}
                     </div>
                 </div>
             `;

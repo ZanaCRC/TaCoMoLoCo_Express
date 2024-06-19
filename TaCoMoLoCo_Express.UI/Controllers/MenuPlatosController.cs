@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TaCoMoLoCo_Express.BL;
 using TaCoMoLoCo_Express.Model;
+using TaCoMoLoCo_Express.UI.ViewModel;
 
 namespace TaCoMoLoCo_Express.UI.Controllers
 {
@@ -37,6 +38,8 @@ namespace TaCoMoLoCo_Express.UI.Controllers
         public IActionResult ObtenerPlato(int id)
         {
             var plato = ElAdministrador.ObtengaElPlato(id);
+
+            
             if (plato != null)
             {
                 return Json(plato);
@@ -49,29 +52,11 @@ namespace TaCoMoLoCo_Express.UI.Controllers
         {
             List<Model.Plato> losPlatos;
 
-            // Obtener los platos del restaurante seleccionado
             losPlatos = ElAdministrador.ObtengaLaListaDePlatosDeUnRestaurante(idRestaurante);
 
-            // Devolver los platos como JSON
             return Json(losPlatos);
         }
 
-
-        /* [HttpPost]
-         public ActionResult AgregarAlCarrito(int platoId)
-         {
-             var plato = ElAdministrador.ObtengaElPlato(platoId);
-             if (plato != null)
-             {
-                 // Recuperar el carrito de la sesión o crear uno nuevo si no existe
-                 var carrito = HttpContext.Session.Get<List<Plato>>("Carrito") ?? new List<Plato>();
-                 carrito.Add(plato);
-                 HttpContext.Session.Set("Carrito", carrito);
-             }
-             // Redirige a la acción Index del controlador actual después de agregar al carrito
-             return RedirectToAction(nameof(Index));
-         }
-        */
         // GET: MenuPlatosController/Details/5
         public ActionResult Details(int id)
         {
