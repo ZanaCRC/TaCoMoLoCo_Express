@@ -174,6 +174,56 @@ namespace TaCoMoLoCo_Express.BL
             return barrios;
         }
 
+        public void InsertarDireccionUsuario(string cedulaUsuario, int idProvincia, int idCanton, int idDistrito, int idBarrio, string calle, string numero, string piso)
+        {
+            try
+            {
+                var sql = @"
+CALL public.insertar_direccion_usuario(@CedulaUsuario, @IdProvincia, @IdCanton, @IdDistrito, @IdBarrio, @Calle, @Numero, @Piso);";
+
+                _connection.Execute(sql, new
+                {
+                    CedulaUsuario = cedulaUsuario,
+                    IdProvincia = idProvincia,
+                    IdCanton = idCanton,
+                    IdDistrito = idDistrito,
+                    IdBarrio = idBarrio,
+                    Calle = calle,
+                    Numero = numero,
+                    Piso = piso
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al insertar dirección usuario: {ex.Message}");
+                throw; // Lanza la excepción para manejarla en un nivel superior
+            }
+        }
+
+
+
+
+
+        public bool ExisteDireccionParaUsuario(string cedulaUsuario)
+        {
+            var sql = @"
+    SELECT EXISTS (
+        SELECT 1
+        FROM public.""DireccionUsuario""
+        WHERE ""CedulaUsuario"" = @CedulaUsuario
+    );";
+
+            var existe = _connection.ExecuteScalar<bool>(sql, new
+            {
+                CedulaUsuario = cedulaUsuario
+            });
+
+            return existe;
+        }
+
+
+
+
 
 
     }

@@ -11,6 +11,8 @@ using TaCoMoLoCo_Express.UI.ViewModel;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace TaCoMoLoCo_Express.UI.Controllers
 {
     public class UsuariosController : Controller
@@ -49,6 +51,7 @@ namespace TaCoMoLoCo_Express.UI.Controllers
                 string cedulaDeQuienInicioSesion;
                 cedulaDeQuienInicioSesion = ElAdministrador.BusqueUsuarioParaLogin(usuarioLogueo.Usuario).Cedula;
                 Model.Usuario usuarioBuscado = ElAdministrador.BusqueUsuarioPorCedula(cedulaDeQuienInicioSesion);
+                TempData["CedulaUsuario"] = cedulaDeQuienInicioSesion;
                 List<Claim> claims = new List<Claim>
                         {
                             new Claim(ClaimTypes.Name, usuarioBuscado.Nombre1 + usuarioBuscado.Nombre2 + usuarioBuscado.Apellido1 + usuarioBuscado.Apellido2),
@@ -73,7 +76,20 @@ namespace TaCoMoLoCo_Express.UI.Controllers
                 if (roleClaim.Value == "Cliente")
                 {
 
-                    return RedirectToAction("Index", "MenuPlatos");
+
+                    //string CedulaDelClinete = ObtenerCedulaDelClienteAutenticado();
+
+                   //Model.Usuario usuarioRegistrado =  ElAdministrador.BusqueUsuarioPorCedula(CedulaDelClinete);
+
+                    if (ElAdministrador.ExisteDireccionParaUsuario(cedulaDeQuienInicioSesion)) { 
+                        return RedirectToAction("Index", "MenuPlatos"); 
+                    }
+                    else {
+                        return RedirectToAction("RegistrarDireccion", "Usuarios");
+                        }
+
+
+                  
 
                 }
 
@@ -117,16 +133,26 @@ namespace TaCoMoLoCo_Express.UI.Controllers
         // POST: UsuariosController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult RegistrarDireccion(IFormCollection collection)
+        public ActionResult RegistrarDireccion(Model.Direccion direccionDelUsuario)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                string cedulaDeQuienInicioSesion = TempData["CedulaUsuario"].ToString();
+
+                ElAdministrador.InsertarDireccionUsuario(cedulaDeQuienInicioSesion, direccionDelUsuario.IdProvincia, direccionDelUsuario.IdCanton, direccionDelUsuario.IdDistrito, direccionDelUsuario.IdBarrio, direccionDelUsuario.Calle, direccionDelUsuario.Numero, direccionDelUsuario.Piso);
+                return RedirectToAction("Index", "MenuPlatos");
+
+               
             }
             catch
             {
                 return View();
             }
+        }
+        public string ObtenerCedulaDelClienteAutenticado()
+        {
+            var cedulaClaim = User.FindFirst("CedulaUsuario");
+            return cedulaClaim?.Value;
         }
 
         [HttpGet]
@@ -142,7 +168,7 @@ namespace TaCoMoLoCo_Express.UI.Controllers
         [HttpGet]
         public IActionResult ObtenerDistritos(int cantonId)
         {
-            var distritos = ElAdministrador.BuscarDistritosPorIdCanton(cantonId);   
+            var distritos = ElAdministrador.BuscarDistritosPorIdCanton(cantonId-1);   
 
             // Mapear los datos a objetos anónimos para evitar problemas de referencia circular
             var result = distritos.Select(d => new {
@@ -222,7 +248,7 @@ namespace TaCoMoLoCo_Express.UI.Controllers
             }
         }
 
-
+        /*
         // GET: UsuariosController/Edit/5
         public ActionResult Edit(int id)
         {
@@ -263,6 +289,6 @@ namespace TaCoMoLoCo_Express.UI.Controllers
             {
                 return View();
             }
-        }
+        }*/
     }
 }

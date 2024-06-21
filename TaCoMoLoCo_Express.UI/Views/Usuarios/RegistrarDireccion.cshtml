@@ -15,7 +15,7 @@
 
             <div class="form-group">
                 <label asp-for="IdProvincia" class="control-label"></label>
-                <select asp-for="IdProvincia" asp-items="Html.GetEnumSelectList<TaCoMoLoCo_Express.Model.EnumProvincia>()"></select>
+                <select asp-for="IdProvincia" asp-items="Html.GetEnumSelectList<TaCoMoLoCo_Express.Model.EnumProvincia>()" class="form-control"></select>
                 <span asp-validation-for="IdProvincia" class="text-danger"></span>
             </div>
 
@@ -37,10 +37,26 @@
 
             <div class="form-group">
                 <label asp-for="IdBarrio" class="control-label"></label>
-                <select asp-for="IdBarrio" id="IdBarrio" class="form-control">
-                    <option value="">Seleccione Barrio</option>
-                </select>
+                <input asp-for="IdBarrio" class="form-control" />
                 <span asp-validation-for="IdBarrio" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Calle" class="control-label"></label>
+                <input asp-for="Calle" class="form-control" />
+                <span asp-validation-for="Calle" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Numero" class="control-label"></label>
+                <input asp-for="Numero" class="form-control" />
+                <span asp-validation-for="Numero" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Piso" class="control-label"></label>
+                <input asp-for="Piso" class="form-control" />
+                <span asp-validation-for="Piso" class="text-danger"></span>
             </div>
 
             <button type="submit" class="btn btn-primary">Registrar Dirección</button>
@@ -56,7 +72,7 @@
             if (provinciaId) {
                 // Cargar cantones
                 $.ajax({
-                    url: '/Usuarios/ObtenerCantones',
+                    url: '@Url.Action("ObtenerCantones", "Usuarios")',
                     type: 'GET',
                     data: { provinciaId: provinciaId },
                     success: function (response) {
@@ -82,7 +98,7 @@
             if (cantonId) {
                 // Cargar distritos
                 $.ajax({
-                    url: '/Usuarios/ObtenerDistritos',
+                    url: '@Url.Action("ObtenerDistritos", "Usuarios")',
                     type: 'GET',
                     data: { cantonId: cantonId },
                     success: function (response) {
@@ -107,7 +123,7 @@
             if (distritoId) {
                 // Cargar barrios
                 $.ajax({
-                    url: '/Usuarios/ObtenerBarrios',
+                    url: '@Url.Action("ObtenerBarrios", "Usuarios")',
                     type: 'GET',
                     data: { distritoId: distritoId },
                     success: function (response) {

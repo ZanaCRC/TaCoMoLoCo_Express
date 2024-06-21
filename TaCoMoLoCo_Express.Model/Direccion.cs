@@ -27,7 +27,7 @@ namespace TaCoMoLoCo_Express.Model
         public string Calle { get; set; }
         public string Numero { get; set; }
 
-        public string DireccionExacta { get; set; }
+        public string Piso { get; set; }
         
     }
 }

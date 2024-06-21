@@ -21,5 +21,10 @@ namespace TaCoMoLoCo_Express.BL
         public List<Canton> BuscarCantonesPorIdProvincia(int idProvincia);
         public List<Distrito> BuscarDistritosPorIdCanton(int IdCanton);
         public List<Barrio> BuscarBarriosPorIdDistrito(int idDistrito);
+        //public void AsignarDireccionAUsuario(Model.Direccion nuevaDireccion, string cedulaDelCliente);
+        public void InsertarDireccionUsuario(string cedulaUsuario, int idProvincia, int idCanton, int idDistrito, int idBarrio, string calle, string numero, string piso);
+        public bool ExisteDireccionParaUsuario(string cedulaUsuario);
+      //  public int ObtenerUltimoIdDireccion();
+      // public void ActualizarIdDireccionPorCedula(string cedula, int nuevoIdDireccion);
     }
 }
