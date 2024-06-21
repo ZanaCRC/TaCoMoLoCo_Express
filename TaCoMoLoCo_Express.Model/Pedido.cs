@@ -11,10 +11,10 @@ namespace TaCoMoLoCo_Express.Model
     {
         public int Codigo { get; set; }
         [ForeignKey("Usuario")]
-        public string CedulaCliente { get; set; }
+        public int CedulaCliente { get; set; }
 
         [ForeignKey("Usuario")]
-        public string CedulaRepartidor { get; set; }
+        public int? IdRepartidor { get; set; }
         public Usuario Usuario { get; set; }
 
         [ForeignKey("Restaurante")]
@@ -22,7 +22,7 @@ namespace TaCoMoLoCo_Express.Model
         public Restaurante Restaurante { get; set; }
 
         [ForeignKey("Cupon")]
-        public int CodigoCupon { get; set; }
+        public int? CodigoCupon { get; set; }
 
         [ForeignKey("Estado")]
         public int IdEstado { get; set; }
