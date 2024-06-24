@@ -68,9 +68,9 @@
                         <span class="text-xl font-medium">₡<span id="total-price">@subtotal.ToString()</span></span>
                     </div>
                     <div class="flex justify-center pt-4 font-bold">
-                        <div class="bg-yellow-400 p-6 rounded-lg cursor-pointer flex items-center justify-center" onclick="checkout()">
+                        <a href="@Url.Action("RealizarPago", "MenuPlatos")" class="bg-yellow-400 p-6 rounded-lg cursor-pointer flex items-center justify-center">
                             Pagar <i class="ml-6 fa fa-arrow-right"></i>
-                        </div>
+                        </a>
                     </div>
                 </div>
             </div>

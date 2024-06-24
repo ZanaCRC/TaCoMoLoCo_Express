@@ -65,7 +65,7 @@ namespace TaCoMoLoCo_Express.UI.Controllers
                 AuthenticationProperties prop = new AuthenticationProperties
                 {
                     IsPersistent = true,
-                    ExpiresUtc = DateTime.UtcNow.AddMinutes(20),
+                    //ExpiresUtc = DateTime.UtcNow.AddMinutes(20),
                     AllowRefresh = true
                 };
 

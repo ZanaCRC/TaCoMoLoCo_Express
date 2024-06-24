@@ -12,6 +12,6 @@ namespace TaCoMoLoCo_Express.Model
         public int CodigoPedido { get; set; }
         public int IdPlato { get; set; }
         public int Unidades { get; set; }
-        public double Precio { get; set; }
+        public decimal Precio { get; set; }
     }
 }

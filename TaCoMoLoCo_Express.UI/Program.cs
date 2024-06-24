@@ -58,6 +58,6 @@ app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Usuarios}/{action=Registrarse}/{id?}");
+    pattern: "{controller=MenuPlatos}/{action=Index}/{id?}");
 
 app.Run();

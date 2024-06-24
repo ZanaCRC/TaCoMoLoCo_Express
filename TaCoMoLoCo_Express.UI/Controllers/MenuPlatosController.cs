@@ -55,12 +55,74 @@ namespace TaCoMoLoCo_Express.UI.Controllers
             if (!string.IsNullOrEmpty(carritoJson))
             {
                 carrito = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ProductoCarrito>>(carritoJson);
+                TempData["Carrito"] = carritoJson;
             }
 
-            // Pasar el carrito a la vista
+            TempData["IdRest"] = carrito[0].IdRestaurante;
+           
             return View(carrito);
         }
 
+        
+        public IActionResult RealizarPago()
+        {
+            var carritoJson = TempData["Carrito"] as string;
+            List<ProductoCarrito> carritoXD = null;
+            if (!string.IsNullOrEmpty(carritoJson))
+            {
+                carritoXD = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ProductoCarrito>>(carritoJson);
+                TempData["Carrito"] = carritoJson;
+            }
+
+            if (carritoXD == null || !carritoXD.Any())
+            {
+                // Manejar el caso en que el carrito esté vacío
+                return View("Error"); // Asegúrate de tener una vista de Error o maneja este caso como prefieras.
+            }
+
+            // Aquí iría la lógica para crear el objeto Pedido y los objetos DetallePedido
+            // basada en la lista de ProductoCarrito recibida
+            Pedido nuevoPedido = new Pedido
+            {
+                FechaDePedido = DateTime.Now,
+                IdEstado = EnumEstadoPedido.REST,
+                IdRestaurante = Convert.ToInt32(TempData["IdRest"]),
+                CedulaCliente = User.Claims.FirstOrDefault(c => c.Type == "CedulaUsuario").Value.ToString(),
+                ImporteTotal = carritoXD.Sum(item => item.Precio * item.Cantidad)
+
+
+
+                 
+                // Añade aquí más propiedades según sea necesario
+            };
+
+            var idPedido = ElAdministradorDeRestaurantes.CrearPedido(nuevoPedido);
+            List<DetallePedido> detallesPedido = carritoXD.Select(item => new DetallePedido
+            {
+                IdPlato = item.Id,
+                Unidades = item.Cantidad,
+                Precio = item.Precio
+            }).ToList();
+
+            // Guardar el pedido y los detalles del pedido
+            bool exito = GuardarPedido(nuevoPedido, detallesPedido);
+
+            if (!exito)
+            {
+                // Manejar el caso de fallo al guardar el pedido
+                return View("Error");
+            }
+
+            // Si todo fue exitoso, redirigir a una vista de confirmación del pedido
+            return RedirectToAction("Index");
+        }
+
+        // Asegúrate de implementar este método según tu lógica de negocio
+        private bool GuardarPedido(Pedido pedido, List<DetallePedido> detallesPedido)
+        {
+            // Lógica para guardar el pedido y los detalles en la base de datos
+            return true;
+        }
         public IActionResult ObtenerPlato(int id)
         {
             var plato = ElAdministrador.ObtengaElPlato(id);

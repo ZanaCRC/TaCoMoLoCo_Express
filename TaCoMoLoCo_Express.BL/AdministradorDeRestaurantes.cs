@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using NpgsqlTypes;
 using TaCoMoLoCo_Express.Model;
 
 namespace TaCoMoLoCo_Express.BL
@@ -47,6 +48,42 @@ namespace TaCoMoLoCo_Express.BL
             _connection.Close();
 
             return idBarrio;
+        }
+
+        public int CrearPedido(Pedido pedido)
+        {
+            using (var command = _contexto.Database.GetDbConnection().CreateCommand())
+            {
+                command.CommandText = @"
+            SELECT * FROM public.crearpedidonuevo(
+                @CedulaCliente::character varying, 
+                @IdRestaurante::integer,
+                @CodigoCupon::character varying,
+                @FechaPedido::date,
+                @IdEstado::integer,
+                @ImporteTotal::numeric
+            )";
+
+                command.Parameters.Add(new NpgsqlParameter("@CedulaCliente", NpgsqlDbType.Varchar) { Value = pedido.CedulaCliente });
+                command.Parameters.Add(new NpgsqlParameter("@IdRestaurante", NpgsqlDbType.Integer) { Value = pedido.IdRestaurante });
+                command.Parameters.Add(new NpgsqlParameter("@CodigoCupon", NpgsqlDbType.Varchar) { Value = "2" });
+                command.Parameters.Add(new NpgsqlParameter("@FechaPedido", NpgsqlDbType.Date) { Value = pedido.FechaDePedido.Date });
+                command.Parameters.Add(new NpgsqlParameter("@IdEstado", NpgsqlDbType.Integer) { Value = 1 });
+                command.Parameters.Add(new NpgsqlParameter("@ImporteTotal", NpgsqlDbType.Numeric) { Value = pedido.ImporteTotal });
+
+                _contexto.Database.OpenConnection();
+                using (var result = command.ExecuteReader())
+                {
+                    if (result.Read())
+                    {
+                        return Convert.ToInt32(result[0]);
+                    }
+                    else
+                    {
+                        throw new Exception("Error creating order");
+                    }
+                }
+            }
         }
     }
 }
