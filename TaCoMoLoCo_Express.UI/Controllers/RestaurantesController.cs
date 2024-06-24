@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TaCoMoLoCo_Express.BL;
 using TaCoMoLoCo_Express.Model;
@@ -7,12 +8,14 @@ namespace TaCoMoLoCo_Express.UI.Controllers
 {
     public class RestaurantesController : Controller
     {
+        
         public readonly IAdministradorDeRestaurantes ElAdministrador;
 
         public RestaurantesController(IAdministradorDeRestaurantes elAdministrador)
         {
             ElAdministrador = elAdministrador;
         }
+        [Authorize]
         // GET: RestaurantesController
         public ActionResult Index(int idDireccion)
         {

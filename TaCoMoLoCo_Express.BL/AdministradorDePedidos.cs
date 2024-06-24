@@ -25,7 +25,7 @@ namespace TaCoMoLoCo_Express.BL
                 @"SELECT * FROM ""Pedido"" WHERE ""IdEstado"" = @estado;",
                 new { estado = 1 }
             ).ToList();
-
+            _connection.Close();
             return pedidos;
         }
 
@@ -35,7 +35,7 @@ namespace TaCoMoLoCo_Express.BL
                 @"SELECT * FROM ""Usuario"" WHERE ""IdRol"" = @IdRol;",
                 new { IdRol = 6 }
             ).ToList();
-
+            _connection.Close();
             return repartidores;
         }
 
@@ -45,7 +45,7 @@ namespace TaCoMoLoCo_Express.BL
                  @"SELECT * FROM ""Usuario"" WHERE ""Cedula"" = @Cedula;",
                 new { Cedula = cedula }
             );
-
+            _connection.Close();
             return usuario;
         }
 
@@ -55,7 +55,7 @@ namespace TaCoMoLoCo_Express.BL
                 @"SELECT * FROM ""Pedido"" WHERE ""Codigo"" = @Id;",
                 new { Id = codigo }
             );
-
+            _connection.Close();
             return pedido;
         }
 
@@ -68,7 +68,9 @@ namespace TaCoMoLoCo_Express.BL
                 WHERE ""Codigo"" = @Id";
 
             _connection.Execute(sql, new { CedulaRepartidor = nuevaCedulaRepartidor, IdEstado = 3, Id = pedidoId });
+            _connection.Close();
         }
+
 
 
 

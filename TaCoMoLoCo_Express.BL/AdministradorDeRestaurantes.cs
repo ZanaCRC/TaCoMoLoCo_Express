@@ -22,18 +22,18 @@ namespace TaCoMoLoCo_Express.BL
         {
 
             var consultaSQL = @"
-        SELECT r.*
-        FROM public.""Restaurante"" r
-        JOIN public.""Coberturas"" c ON r.""Id"" = c.""IdRestaurante""
-        JOIN public.""Direccion"" d ON c.""IdBarrio"" = d.""IdBarrio""
-        JOIN public.""Usuario"" u ON d.""Id"" = u.""IdDireccion""
-        WHERE u.""Cedula"" = {0}";
+            SELECT r.*
+            FROM public.""Restaurante"" r
+            JOIN public.""Coberturas"" c ON r.""Id"" = c.""IdRestaurante""
+            JOIN public.""DireccionUsuario"" du ON c.""IdBarrio"" = du.""IdBarrio""
+            WHERE du.""CedulaUsuario"" = {0}
+        ";
 
 
             var restaurantes = _contexto.Restaurante
                 .FromSqlRaw(consultaSQL, usuarioId)
                 .ToList();
-
+         
             return restaurantes;
         }
 
@@ -44,6 +44,7 @@ namespace TaCoMoLoCo_Express.BL
                 @"SELECT ""IdBarrio"" FROM ""Direccion"" WHERE ""Id"" = @IdDireccion;",
                 new { IdDireccion = idDireccion }
             );
+            _connection.Close();
 
             return idBarrio;
         }

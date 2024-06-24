@@ -127,7 +127,9 @@ namespace TaCoMoLoCo_Express.BL
                 new { NombreUsuario = nombreUsuario }
             );
 
+            _connection.Close();
             return usuario;
+            
         }
 
 
@@ -137,6 +139,7 @@ namespace TaCoMoLoCo_Express.BL
                  @"SELECT * FROM ""Usuario"" WHERE ""Cedula"" = @Cedula;",
                 new { Cedula = cedula }
             );
+            _connection.Close();
 
             return usuario;
         }
@@ -147,6 +150,7 @@ namespace TaCoMoLoCo_Express.BL
                 @"SELECT * FROM ""Canton"" WHERE ""IdProvincia"" = @IdProvincia;",
                 new { IdProvincia = idProvincia }
             ).ToList();
+            _connection.Close();
 
             return cantones;
         }
@@ -160,6 +164,7 @@ namespace TaCoMoLoCo_Express.BL
                 @"SELECT * FROM ""Distrito"" WHERE ""IdCanton"" = @IdCan;",
                 new { IdCan = IdCanton }
             ).ToList();
+            _connection.Close();
 
             return Distritos;
         }
@@ -170,7 +175,7 @@ namespace TaCoMoLoCo_Express.BL
                 @"SELECT * FROM ""Barrio"" WHERE ""IdDistrito"" = @IdDistrito;",
                 new { IdDistrito = idDistrito }
             ).ToList();
-
+            _connection.Close();
             return barrios;
         }
 
@@ -192,7 +197,9 @@ CALL public.insertar_direccion_usuario(@CedulaUsuario, @IdProvincia, @IdCanton, 
                     Numero = numero,
                     Piso = piso
                 });
+                _connection.Close();
             }
+
             catch (Exception ex)
             {
                 Console.WriteLine($"Error al insertar dirección usuario: {ex.Message}");
@@ -217,6 +224,7 @@ CALL public.insertar_direccion_usuario(@CedulaUsuario, @IdProvincia, @IdCanton, 
             {
                 CedulaUsuario = cedulaUsuario
             });
+            _connection.Close();
 
             return existe;
         }

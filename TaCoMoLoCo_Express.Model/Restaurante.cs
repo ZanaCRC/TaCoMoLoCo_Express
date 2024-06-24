@@ -12,9 +12,6 @@ namespace TaCoMoLoCo_Express.Model
     {
         public int Id { get; set; }
 
-        [ForeignKey("Direccion")]
-        public int IdDireccion { get; set; } 
-
         public string Nombre { get; set; }
         public double Comision { get; set; }
         
