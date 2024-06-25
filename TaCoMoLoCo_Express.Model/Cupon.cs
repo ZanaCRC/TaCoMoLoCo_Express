@@ -10,9 +10,9 @@ namespace TaCoMoLoCo_Express.Model
     public class Cupon
     {
         [Key] 
-        public int CodigoDescuento { get; set; }
+        public int Codigo { get; set; }
         public DateTime FechaCaducidad { get; set; }
-
+        public int UsosDisponibles { get; set; }
         public double PorcentajeDescuento { get; set; }
     }
 }

@@ -16,6 +16,7 @@ builder.Services.AddScoped<IAdministradorDeUsuarios, AdministradorDeUsuarios>();
 builder.Services.AddScoped<IAdministradorDePedidos, AdministradorDePedidos>();
 builder.Services.AddScoped<IAdministradorDePlatos, AdministradorDePlatos>();
 builder.Services.AddScoped<IAdministradorDeRestaurantes, AdministradorDeRestaurantes>();
+builder.Services.AddScoped<IAdministradorDeCupon, AdministradorDeCupones>();
 builder.Services.AddDbContext<DBContext>(options =>
     options.UseNpgsql(connectionString));
 
@@ -58,6 +59,6 @@ app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=MenuPlatos}/{action=Index}/{id?}");
+    pattern: "{controller=Usuarios}/{action=Registrarse}/{id?}");
 
 app.Run();

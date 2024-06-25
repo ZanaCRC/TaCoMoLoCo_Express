@@ -1,4 +1,5 @@
-﻿@model IEnumerable<TaCoMoLoCo_Express.Model.Plato>
+﻿@model IEnumerable<TaCoMoLoCo_Express.UI.ViewModel.PlatoVM>
+
 
 @{
     Layout = null;
@@ -9,7 +10,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Platos</title>
+    <title>Chill Eats</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <style>
@@ -20,6 +21,25 @@
         .custom-rounded {
             border-radius: 25px;
         }
+       /* Estilo para el botón de eliminar */
+.grid-cols-4 > button {
+    padding: 0.5rem; /* Espaciado interno del botón */
+    border: none; /* Elimina el borde del botón si no es necesario */
+    cursor: pointer; /* Cambia el cursor al pasar por encima del botón */
+    outline: none; /* Elimina el contorno al enfocar el botón */
+}
+
+/* Estilo para el ícono dentro del botón */
+.grid-cols-4 > button i {
+    font-size: 0.75rem; /* Tamaño del ícono */
+}
+
+/* Estilo para el hover del botón */
+.grid-cols-4 > button:hover {
+    background-color: #e53e3e; /* Color de fondo cuando se pasa el mouse */
+}
+
+
 
         [v-cloak] {
             display: none;
@@ -31,7 +51,28 @@
         }
 
         .sidebar {
+            position: -webkit-sticky; /* Para soporte de Safari */
+            position: sticky;
+            top: 0; /* Ajusta esto según sea necesario, 0 para que se pegue al tope de la ventana */
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-height: 100vh;
+            overflow-y: auto;
+        }
+
+
+        #cart-items {
+            overflow-y: auto; /* Habilita el desplazamiento vertical si es necesario */
+            max-height: 280px; /* Establece una altura máxima */
+        }
+
+
+        .flex-grow.flex.flex-col.justify-end {
+            flex: 1; /* Hace que este contenedor llene el espacio restante */
+            display: flex;
+            flex-direction: column; /* Asegura que los elementos se apilen verticalmente */
+            
         }
 
         .timer {
@@ -60,82 +101,120 @@
             </div>
             <div class="grid grid-cols-3 bg-orange-100 mt-12 rounded-lg"></div>
             <div class="flex mt-12 items-end">
-                <h3 class="text-xl font-bold">Restaurantes</h3>
-                <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/237/hamburger_1f354.png" class="mx-4 h-8 w-8" alt="">
+                <h3 class="text-3xl font-bold text-orange-600 mb-4">Restaurantes</h3>
+               @{
+                   /*
+                    * <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/237/hamburger_1f354.png" class="mx-4 h-8 w-8" alt="">
+                    */
+               }
+                 
+        
             </div>
-            <div class="grid grid-cols-9 gap-6 mt-12">
 
-                    @foreach (var rest in ViewBag.Restaurantes)
-                    {
-                        <div class="border rounded-full p-2 flex flex-col items-center shadow-xl cursor-pointer transition-colors duration-700 ease-in-out"
-                             style="background: @(rest.Id == ViewBag.ActiveCategory ? "yellow" : "white")"
-                             onclick="seleccionarRestaurante(@rest.Id)">
-                            <div class="border rounded-full p-2 bg-white">
-                                <img class="h-12 w-12" src="/Imagenes/Restaurant.png" alt="si">
-                            </div>
-                            <p class="mt-3 mb-10 font-bold text-xs">@rest.Nombre</p>
-                        </div>
-                    }
-                
-               
 
-                <button class="h-10 rounded-lg self-center hover:shadow-xl flex justify-center items-center bg-gray-100 p-3 ml-auto">
-                    <i class="fa fa-chevron-right"></i>
-                </button>
+          
+
+<div class="grid grid-cols-9 gap-6 mt-12">
+    @foreach (var rest in ViewBag.Restaurantes)
+    {
+        <div class="border rounded-lg p-4 flex flex-col items-center shadow-lg cursor-pointer transition duration-500 ease-in-out transform hover:-translate-y-1 hover:shadow-2xl"
+             data-restaurante-id="@rest.Id"
+             style="background: @(rest.Id == ViewBag.ActiveCategory ? "yellow" : "white")"
+             onclick="seleccionarRestaurante(@rest.Id)">
+            <div class="border rounded-full p-2 bg-white">
+                <img class="h-12 w-12" src="/Imagenes/Restaurant.png" alt="Restaurante">
             </div>
+            <p class="mt-3 mb-10 font-bold text-sm text-gray-700">@rest.Nombre</p>
+        </div>
+    }
+    <button class="h-10 rounded-lg self-center hover:shadow-xl flex justify-center items-center bg-gray-100 p-3 ml-auto">
+        <i class="fa fa-chevron-right"></i>
+    </button>
+</div>
+
             <div class="mt-12 grid grid-cols-3 gap-10">
                 @foreach (var food in Model)
                 {
-                    <div class="flex flex-col">
-                        <div class="shadow-lg relative h-40 custom-rounded" style="background-size: cover; background-repeat: no-repeat; background-image: url(/Imagenes/tres.jpg);">
-                            <div class="absolute bottom-0 left-0 w-1/3 bg-gray-200 custom-tr-rounded p-2 text-center text-xs">
-                                <span class="font-bold">10</span> - 15
+                    // Verificar si food.Image no es nulo
+                    if (food.Image != null && food.Image.Length > 0)
+                    {
+                        string imageBase64 = Convert.ToBase64String(food.Image);
+                        string imageSrc = $"data:image/jpeg;base64,{imageBase64}";
+
+                        <div class="flex flex-col">
+                            <div class="shadow-lg relative h-40 custom-rounded" style="background-size: cover; background-repeat: no-repeat; background-image: url('@imageSrc');">
+                                <div class="absolute bottom-0 left-0 w-1/3 bg-gray-200 custom-tr-rounded p-2 text-center text-xs">
+                                    <span class="font-bold">10</span> - 15
+                                </div>
+                            </div>
+                            <p class="mt-4 font-medium">@food.Nombre</p>
+                            <div class="mt-2 flex items-center justify-between">
+                                <span class="text-gray-600 font-hairline text-xs mx-4">@food.NombreCategoria</span>
+                                <span class="text-gray-600 font-hairline text-xs mx-4">@food.Descripcion</span>
+                                <span class="text-gray-600 font-hairline text-xs mx-4">₡@food.Precio</span>
+                                <span>
+                                    <button onclick="addToCart(@food.Id)" class="bg-blue-500 text-white rounded p-2 ml-auto">Comprar</button>
+                                </span>
                             </div>
                         </div>
-                        <p class="mt-4 font-medium">@food.Nombre</p>
-                        <div class="mt-2 flex items-center justify-between">
-
-                            <span class="text-gray-600 font-hairline text-xs mx-4">@food.IdCategoria</span>
-                            <span class="text-gray-600 font-hairline text-xs mx-4">@food.Descripcion</span>
-                            <span class="text-gray-600 font-hairline text-xs mx-4">₡@food.Precio</span>
-                            <span>
-                                <button onclick="addToCart(@food.Id)" class="bg-blue-500 text-white rounded p-2 ml-auto">Comprar</button>
-                            </span>
-                             
+                    }
+                    else
+                    {
+                        <div class="flex flex-col">
+                            <!-- Placeholder o mensaje de imagen no disponible -->
+                            <p class="mt-4 font-medium">@food.Nombre</p>
+                            <div class="mt-2 flex items-center justify-between">
+                                <span class="text-gray-600 font-hairline text-xs mx-4">@food.NombreCategoria</span>
+                                <span class="text-gray-600 font-hairline text-xs mx-4">@food.Descripcion</span>
+                                <span class="text-gray-600 font-hairline text-xs mx-4">₡@food.Precio</span>
+                                <span>
+                                    <button onclick="addToCart(@food.Id)" class="bg-blue-500 text-white rounded p-2 ml-auto">Comprar</button>
+                                </span>
+                            </div>
                         </div>
-                    </div>
+                    }
                 }
             </div>
+
+
         </div>
         <div class="bg-gray-200 sidebar flex flex-col min-h-screen w-1/4">
             <div class="px-6">
-                <div class="h-12 mt-8 flex justify-end items-center">
-                    <i class="fa fa-user"></i>
-                    <div class="rounded-lg bg-yellow-400 px-3 font-bold text-xs py-1 ml-6">3</div>
-                </div>
                 <div class="mt-8">
                     <p class="font-medium text-xl">Mi orden 😎</p>
                 </div>
                 <div id="cart-items" class="mt-8 p-6 bg-white custom-rounded font-hairline text-xs">
                     <!-- Aquí se van a listar los items del carrito -->
                 </div>
-                <div class="grid grid-cols-4 gap-1 mb-5 mt-10">
-                    <div class="h-10 rounded-lg  flex items-center px-0" style="background-color: rgba(255, 165, 0, 0.5); color: #feebc4;">
-                        <i class="fa fa-car m-auto" style="color: rgba(255, 165, 0, 0.5); color: #ed8936;"></i>
-                    </div>
-                    <div class="col-span-2 grid grid-cols-2 text-xxs font-semibold">
-                        <p class="col-span-2 flex justify-center items-center">Envío</p>
-                    </div>
-                    <div class="flex justify-end items-center text-gray-600 font-hairline text-xs">
-                        ₡0.00
-                    </div>
-                </div>
+  
+
             </div>
             <div class="flex-grow flex flex-col justify-end pl-6 pr-6">
                 <div class="flex justify-between items-center border-b-2 pb-2">
                     <span>Total:</span>
                     <span class="text-xl font-medium">₡<span id="total-price">0.00</span></span>
                 </div>
+                <div class="flex justify-between items-center border-b-2 pb-2">
+                    <span>Subtotal:</span>
+                    <span class="text-xl font-medium">₡<span id="subtotal-price">0.00</span></span>
+                </div>
+
+               <!-- Cupón Mejorado -->
+                <div class="mt-6 mb-4 relative">
+                    <label for="coupon-code" class="block text-sm font-medium text-gray-700 mb-2">Código de cupón</label>
+                    <div class="relative rounded-md shadow-sm">
+                        <input type="text" name="coupon-code" id="coupon-code" class="form-input block w-full pl-4 pr-14 py-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 transition duration-300 ease-in-out" placeholder="ABC123">
+                        <div class="absolute inset-y-0 right-0 flex items-center">
+                            <button id="aplicar-cupon-btn" class="h-full py-0 px-4 bg-indigo-500 text-white rounded-r-md sm:text-sm focus:outline-none hover:bg-indigo-600 transition duration-300 ease-in-out">Aplicar</button>
+
+                        </div>
+                    </div>
+                    <p id="coupon-feedback" class="mt-2 text-xs text-red-600 hidden">Cupón inválido. Por favor, inténtalo de nuevo.</p>
+                </div>
+
+
+
+                <!-- Fin del diseño mejorado para el cupón -->
                 <div class="flex justify-end pt-4  font-bold">
                     <div class="ml-auto bg-yellow-400 p-6 rounded-lg cursor-pointer flex items-center justify-center flex-grow" onclick="checkout()">
                         Checkout <i class="ml-6 fa fa-arrow-right"></i>
@@ -149,20 +228,69 @@
 </body>
 
 </html>
+<style>
+    .form-input {
+        background-color: #f7fafc;
+        border: 1px solid #cbd5e0;
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        border-radius: 0.375rem;
+        transition: all 0.3s ease-in-out;
+    }
+
+        .form-input:focus {
+            border-color: #3182ce;
+            box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.6);
+            background-color: #edf2f7;
+        }
+
+        .form-input::placeholder {
+            color: #a0aec0;
+        }
+
+        .form-input:invalid {
+            border-color: #e53e3e;
+        }
+
+            .form-input:invalid:focus {
+                border-color: #c53030;
+                box-shadow: 0 0 0 2px rgba(229, 62, 62, 0.5);
+            }
+
+        .form-input:hover {
+            border-color: #90cdf4;
+        }
+
+        .form-input.error {
+            border-color: #e53e3e;
+        }
+
+            .form-input.error:focus {
+                border-color: #c53030;
+                box-shadow: 0 0 0 2px rgba(229, 62, 62, 0.5);
+            }
+
+    #coupon-feedback {
+        color: #e53e3e;
+        display: none;
+    }
+
+        #coupon-feedback.visible {
+            display: block;
+        }
+</style>
 
 <script>
     function seleccionarRestaurante(restauranteId) {
-        // Cambiar el color del restaurante seleccionado
-        var restauranteSeleccionado = document.querySelector(`.flex[data-restaurante-id="${restauranteId}"]`);
+        // Resetear todos los colores de los restaurantes a blanco
+        document.querySelectorAll('[data-restaurante-id]').forEach(item => {
+            item.style.background = 'white'; // Asegúrate de que este sea el color de fondo original
+        });
 
-        // Verificar si se encontró el restaurante antes de intentar cambiar el estilo
+        // Cambiar el color de fondo del restaurante seleccionado a amarillo
+        var restauranteSeleccionado = document.querySelector(`div[data-restaurante-id="${restauranteId}"]`);
         if (restauranteSeleccionado) {
-            // Resetear todos los colores de los restaurantes
-            document.querySelectorAll('.flex[data-restaurante-id]').forEach(item => {
-                item.style.background = 'white';
-            });
-
-            // Cambiar color del restaurante seleccionado
             restauranteSeleccionado.style.background = 'yellow';
         }
 
@@ -202,33 +330,49 @@
     }
 
     function renderizarPlatos(platos) {
+        console.log("Datos recibidos por renderizarPlatos:", platos); // Imprime los datos recibidos
+
         // Limpiar el contenedor actual de platos
         var contenedorPlatos = document.querySelector('.grid.grid-cols-3.gap-10');
         contenedorPlatos.innerHTML = '';
 
         // Renderizar los nuevos platos
         platos.forEach(plato => {
+            console.log("Procesando plato:", plato); // Imprime cada plato individualmente
+
+            let imageSrc = '';
+            if (plato.image) {
+                // Asumiendo que plato.image ya es una cadena base64 correctamente formateada
+                imageSrc = `data:image/jpeg;base64,${plato.image}`;
+            } else {
+                // Proporcionar una imagen predeterminada si no hay imagen
+                imageSrc = '/Imagenes/placeholder.jpg'; // Asegúrate de tener una imagen de marcador de posición en esta ruta
+            }
+
             var platoHTML = `
-                    <div class="flex flex-col">
-                            <div class="shadow-lg relative h-40 custom-rounded" style="background-size: cover; background-repeat: no-repeat; background-image: url(/Imagenes/tres.jpg);">
-                            <div class="absolute bottom-0 left-0 w-1/3 bg-gray-200 custom-tr-rounded p-2 text-center text-xs">
-                                <span class="font-bold">10</span> min
-                            </div>
+                <div class="flex flex-col">
+                        <div class="shadow-lg relative h-40 custom-rounded" style="background-size: cover; background-repeat: no-repeat; background-image: url('${imageSrc}');">
+                        <div class="absolute bottom-0 left-0 w-1/3 bg-gray-200 custom-tr-rounded p-2 text-center text-xs">
+                            <span class="font-bold">10</span> min
                         </div>
-                        <p class="mt-4 font-medium">${plato.nombre}</p>
-                            <div class="mt-2 flex items-center justify-between">
-                            
-                            <span class="text-gray-600 font-hairline text-xs mx-4">${plato.idCategoria}</span>
-                            <span class="text-gray-600 font-hairline text-xs mx-4">${plato.descripcion}</span>
-                            <span class="text-gray-600 font-hairline text-xs mx-4">${plato.precio}</span>
-                            <span>
-                                 <button onclick="addToCart(${plato.id})" class="bg-blue-500 text-white rounded p-2 ml-auto">Comprar</button>
-                            </span>
-                        </div>
-                    </div>`;
+                    </div>
+                    <p class="mt-4 font-medium">${plato.nombre}</p>
+                        <div class="mt-2 flex items-center justify-between">
+
+                        <span class="text-gray-600 font-hairline text-xs mx-4">${plato.nombreCategoria}</span>
+                        <span class="text-gray-600 font-hairline text-xs mx-4">${plato.descripcion}</span>
+                        <span class="text-gray-600 font-hairline text-xs mx-4">${plato.precio}</span>
+                        <span>
+                             <button onclick="addToCart(${plato.id})" class="bg-blue-500 text-white rounded p-2 ml-auto">Comprar</button>
+                        </span>
+                    </div>
+                </div>`;
             contenedorPlatos.innerHTML += platoHTML;
         });
+
     }
+
+
 
     function checkout() {
         fetch('/MenuPlatos/ProcesarCarrito', {
@@ -268,67 +412,109 @@
 <script>
     // Variable global para mantener el estado del carrito
     let cart = [];
+    let cuponDescuento = 0; // Variable global para almacenar el descuento aplicado
 
 
     // Función para renderizar los items del carrito en el HTML
     function renderCartItems() {
+
         const cartItemsContainer = document.getElementById('cart-items');
 
         cartItemsContainer.innerHTML = '';
 
         cart.forEach((item, index) => {
+            let imageSrc = '';
+            if (item.image) {
+                imageSrc = `data:image/jpeg;base64,${item.image}`;
+            } else {
+                // Proporcionar una imagen predeterminada si no hay imagen
+                imageSrc = '/Imagenes/placeholder.jpg'; // Asegúrate de tener una imagen de marcador de posición en esta ruta
+            }
             const itemHTML = `
-                <div class="grid grid-cols-4 gap-1 mb-5 ${index === 0 ? 'mt-3' : ''}">
-                    <div class="h-10 rounded-lg" style="background-size: cover; background-repeat: no-repeat; background-image: url(/Imagenes/tres.jpg);"></div>
-                    <div class="col-span-2 grid grid-cols-3 text-xxs font-semibold">
-                        <p class="flex justify-center items-center">${item.quantity}x</p>
-                        <p class="col-span-2 flex items-center">${item.nombre}</p>
-                    </div>
-                    <div class="flex justify-end items-center text-gray-600 font-hairline text-xs">
-                        $${(item.precio * item.quantity).toFixed(2)}
-                    </div>
-                        <button onclick="removeFromCart(${item.id})" class="ml-auto bg-red-500 p-1 rounded text-white text-xs">X</button>
+        <div class="grid grid-cols-4 gap-1 mb-5 ${index === 0 ? 'mt-3' : ''}" style="position: relative;">
+            <div class="h-10 rounded-lg relative" style="background-size: cover; background-repeat: no-repeat; background-image: url('${imageSrc}');">
+                <button onclick="removeFromCart(${item.id})" class="absolute bottom-0 right-0 flex items-center justify-center bg-red-500 text-white rounded-full w-6 h-6 hover:bg-red-600 transition duration-300 ease-in-out">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="col-span-2 grid grid-cols-3 text-xxs font-semibold">
+                <p class="flex justify-center items-center">${item.quantity}x</p>
+                <p class="col-span-2 flex items-center">${item.nombre}</p>
+            </div>
+            <div class="flex justify-end items-center text-gray-600 font-hairline text-xs">
+                $${(item.precio * item.quantity).toFixed(2)}
+            </div>
+        </div>
+    `;
 
-                </div>
-            `;
+
+
             cartItemsContainer.innerHTML += itemHTML;
         });
     }
 
-
     // Función para remover un item del carrito
     function removeFromCart(platoId) {
-       
-        
-        
         fetch(`/MenuPlatos/ObtenerPlato?id=${platoId}`)
             .then(response => response.json())
             .then(plato => {
                 // Chequear si el plato ya está en el carrito
-                const existingItem = cart.find(item => item.id === plato.id);
-                if (existingItem.quantity) {
-                    existingItem.quantity--;
-                } else {
-                    cart = cart.filter(item => item.id !== platoId);
+                const index = cart.findIndex(item => item.id === plato.id);
+                if (index !== -1) {
+                    if (cart[index].quantity > 1) {
+                        // Si la cantidad es mayor a 1, simplemente reducirla
+                        cart[index].quantity--;
+                    } else {
+                        // Si la cantidad es 1, eliminar el ítem del carrito
+                        cart.splice(index, 1);
+                    }
+                    renderCartItems();
+                    updateTotalPrice();
                 }
-                renderCartItems();
-                updateTotalPrice();
             })
-            .catch(error => console.error('Error al agregar el plato al carrito:', error));
-        
-
-        renderCartItems();
-        updateTotalPrice();
+            .catch(error => console.error('Error al remover el plato del carrito:', error));
     }
+
 
     // Función para actualizar el precio total
-    function updateTotalPrice() {
+    function updateTotalPrice(descuento) {
         const totalPrice = cart.reduce((total, item) => total + item.precio * item.quantity, 0);
         document.getElementById('total-price').innerText = totalPrice.toFixed(2);
+
+        if (descuento === null || descuento === undefined) {
+            document.getElementById('subtotal-price').innerText = totalPrice.toFixed(2);
+        } else {
+            const discountedPrice = totalPrice - (totalPrice * descuento / 100);
+            document.getElementById('subtotal-price').innerText = discountedPrice.toFixed(2);
+        }
     }
+
 
     
 </script>
 
-
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#aplicar-cupon-btn').click(function (event) {
+            console.log('Botón clickeado');
+            console.log('@Url.Action("VerificarCupon", "MenuPlatos")');
+            event.preventDefault(); // Esto previene la recarga de la página o cualquier acción por defecto del botón.
+            var codigoCupon = $('#coupon-code').val();
+            $.ajax({
+                url: '@Url.Action("VerificarCupon", "MenuPlatos")', // Asegúrate de reemplazar "MenuPlatos" con el nombre real de tu controlador si es diferente
+                type: 'POST',
+                data: { codigoCupon: codigoCupon },
+                success: function (response) {
+                    console.log(response);
+                    if (response.success) {
+                        $('#coupon-feedback').removeClass('hidden').addClass('text-green-600').text(response.mensaje + " Descuento: " + response.descuento + "%");
+                        updateTotalPrice(response.descuento); // Asegúrate de pasar el descuento como argumento
+                    } else {
+                        $('#coupon-feedback').removeClass('hidden').text(response.mensaje);
+                    }
+                }
+            });
+        });
+    });
+</script>

@@ -22,7 +22,7 @@ namespace TaCoMoLoCo_Express.Model
         public string Descripcion { get; set; }
         public decimal Precio { get; set; }
         
-       //public byte[] Imagen { get; set; }
+        public byte[] Image { get; set; }
         
     }
 }

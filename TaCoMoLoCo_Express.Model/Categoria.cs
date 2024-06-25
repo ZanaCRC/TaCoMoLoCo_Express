@@ -10,6 +10,6 @@ namespace TaCoMoLoCo_Express.Model
     {
         public int Id { get; set; } 
         public string Nombre { get; set; }
-        public ICollection<Plato> Platos { get; set; }
+       
     }
 }

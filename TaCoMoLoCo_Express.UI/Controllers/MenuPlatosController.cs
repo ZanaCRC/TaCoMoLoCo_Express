@@ -12,23 +12,41 @@ namespace TaCoMoLoCo_Express.UI.Controllers
     {
         public readonly IAdministradorDePlatos ElAdministrador;
         public readonly IAdministradorDeRestaurantes ElAdministradorDeRestaurantes;
-        public MenuPlatosController(IAdministradorDePlatos administrador,IAdministradorDeRestaurantes administradorDeRestaurantes)
+        public readonly IAdministradorDeCupon ElAdministradorDeCupones;
+        public MenuPlatosController(IAdministradorDePlatos administrador, IAdministradorDeRestaurantes administradorDeRestaurantes, IAdministradorDeCupon administradorDeCupon)
         {
             ElAdministrador = administrador;
             ElAdministradorDeRestaurantes = administradorDeRestaurantes;
+            ElAdministradorDeCupones = administradorDeCupon;
         }
 
         // GET: MenuPlatosController
         public ActionResult Index()
         {
-            List<Model.Plato> losPlatos = new List<Plato>();
+            List<PlatoVM> losPlatos = new List<PlatoVM>();
             List<Restaurante> restaurantesDisponiblesEnEsaDireccion;
             restaurantesDisponiblesEnEsaDireccion = ElAdministradorDeRestaurantes.ObtengaLaListaDeRestaurantes(User.Claims.FirstOrDefault(c => c.Type == "CedulaUsuario").Value.ToString());
             ViewBag.Restaurantes = restaurantesDisponiblesEnEsaDireccion;
 
             foreach (var restaurante in restaurantesDisponiblesEnEsaDireccion)
             {
-                losPlatos.AddRange(ElAdministrador.ObtengaLaListaDePlatosDeUnRestaurante(restaurante.Id));
+                List<Plato> platos = new List<Plato>();
+                platos = ElAdministrador.ObtengaLaListaDePlatosDeUnRestaurante(restaurante.Id);
+
+                List<PlatoVM> platosVM = new List<PlatoVM>();
+                foreach (var plato in platos)
+                {
+                    PlatoVM platoVM = new PlatoVM();
+                    platoVM.Id = plato.Id;
+                    platoVM.Nombre = plato.Nombre;
+                    platoVM.Precio = plato.Precio;
+                    platoVM.Descripcion = plato.Descripcion;
+                    platoVM.NombreCategoria = plato.Categoria.Nombre;
+                    platoVM.Image = plato.Image;
+                    platosVM.Add(platoVM);
+                }
+
+                losPlatos.AddRange(platosVM);
             }
 
 
@@ -41,9 +59,9 @@ namespace TaCoMoLoCo_Express.UI.Controllers
         {
             // Almacenar el carrito en TempData
             TempData["Carrito"] = Newtonsoft.Json.JsonConvert.SerializeObject(carrito);
-            return Json(new { success = true});
-            
-         
+            return Json(new { success = true });
+
+
         }
 
 
@@ -59,11 +77,11 @@ namespace TaCoMoLoCo_Express.UI.Controllers
             }
 
             TempData["IdRest"] = carrito[0].IdRestaurante;
-           
+
             return View(carrito);
         }
 
-        
+
         public IActionResult RealizarPago()
         {
             var carritoJson = TempData["Carrito"] as string;
@@ -76,12 +94,11 @@ namespace TaCoMoLoCo_Express.UI.Controllers
 
             if (carritoXD == null || !carritoXD.Any())
             {
-                // Manejar el caso en que el carrito esté vacío
-                return View("Error"); // Asegúrate de tener una vista de Error o maneja este caso como prefieras.
+
+                return View("Error");
             }
 
-            // Aquí iría la lógica para crear el objeto Pedido y los objetos DetallePedido
-            // basada en la lista de ProductoCarrito recibida
+
             Pedido nuevoPedido = new Pedido
             {
                 FechaDePedido = DateTime.Now,
@@ -91,9 +108,6 @@ namespace TaCoMoLoCo_Express.UI.Controllers
                 ImporteTotal = carritoXD.Sum(item => item.Precio * item.Cantidad)
 
 
-
-                 
-                // Añade aquí más propiedades según sea necesario
             };
 
             var idPedido = ElAdministradorDeRestaurantes.CrearPedido(nuevoPedido);
@@ -125,12 +139,24 @@ namespace TaCoMoLoCo_Express.UI.Controllers
         }
         public IActionResult ObtenerPlato(int id)
         {
-            var plato = ElAdministrador.ObtengaElPlato(id);
+            Plato plato = ElAdministrador.ObtengaElPlato(id);
 
-            
+
+
+
+            PlatoVM platoVM = new PlatoVM();
+            platoVM.Id = plato.Id;
+            platoVM.Nombre = plato.Nombre;
+            platoVM.Precio = plato.Precio;
+            platoVM.Descripcion = plato.Descripcion;
+            platoVM.IdRestaurante = plato.IdRestaurante;
+            platoVM.Image = plato.Image;
+
+
+
             if (plato != null)
             {
-                return Json(plato);
+                return Json(platoVM);
             }
             return NotFound();
         }
@@ -142,76 +168,39 @@ namespace TaCoMoLoCo_Express.UI.Controllers
 
             losPlatos = ElAdministrador.ObtengaLaListaDePlatosDeUnRestaurante(idRestaurante);
 
-            return Json(losPlatos);
+            List<PlatoVM> platosVM = new List<PlatoVM>();
+            foreach (var plato in losPlatos)
+            {
+                PlatoVM platoVM = new PlatoVM();
+                platoVM.Id = plato.Id;
+                platoVM.Nombre = plato.Nombre;
+                platoVM.Precio = plato.Precio;
+                platoVM.Descripcion = plato.Descripcion;
+                platoVM.NombreCategoria = plato.Categoria.Nombre;
+                platoVM.Image = plato.Image;
+                platosVM.Add(platoVM);
+            }
+
+
+            return Json(platosVM);
         }
 
-        // GET: MenuPlatosController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: MenuPlatosController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: MenuPlatosController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public IActionResult VerificarCupon(string codigoCupon)
         {
-            try
+            var cupon = ElAdministradorDeCupones.VerificarCupon(codigoCupon);
+            if (cupon != null && cupon.FechaCaducidad >= DateTime.Now && cupon.UsosDisponibles > 0)
             {
-                return RedirectToAction(nameof(Index));
+                // Aquí puedes aplicar el descuento o simplemente devolver información del cupón.
+                return Json(new { success = true, mensaje = "Cupón válido.", descuento = cupon.PorcentajeDescuento });
             }
-            catch
+            else
             {
-                return View();
+                return Json(new { success = false, mensaje = "Cupón inválido o expirado." });
             }
         }
 
-        // GET: MenuPlatosController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
 
-        // POST: MenuPlatosController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
 
-        // GET: MenuPlatosController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: MenuPlatosController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }
