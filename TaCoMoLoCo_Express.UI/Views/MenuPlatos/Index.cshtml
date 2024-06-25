@@ -477,14 +477,14 @@
 
 
     // Función para actualizar el precio total
-    function updateTotalPrice(descuento) {
+    function updateTotalPrice() {
         const totalPrice = cart.reduce((total, item) => total + item.precio * item.quantity, 0);
         document.getElementById('total-price').innerText = totalPrice.toFixed(2);
 
-        if (descuento === null || descuento === undefined) {
+        if (cuponDescuento === null || cuponDescuento === undefined) {
             document.getElementById('subtotal-price').innerText = totalPrice.toFixed(2);
         } else {
-            const discountedPrice = totalPrice - (totalPrice * descuento / 100);
+            const discountedPrice = totalPrice - (totalPrice * cuponDescuento / 100);
             document.getElementById('subtotal-price').innerText = discountedPrice.toFixed(2);
         }
     }
@@ -509,7 +509,8 @@
                     console.log(response);
                     if (response.success) {
                         $('#coupon-feedback').removeClass('hidden').addClass('text-green-600').text(response.mensaje + " Descuento: " + response.descuento + "%");
-                        updateTotalPrice(response.descuento); // Asegúrate de pasar el descuento como argumento
+                        cuponDescuento = response.descuento;
+                        updateTotalPrice(); // Asegúrate de pasar el descuento como argumento
                     } else {
                         $('#coupon-feedback').removeClass('hidden').text(response.mensaje);
                     }
