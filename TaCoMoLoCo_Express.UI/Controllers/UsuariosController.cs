@@ -127,9 +127,15 @@ namespace TaCoMoLoCo_Express.UI.Controllers
         {
             return View();
         }
-      
 
-       
+        public async Task<IActionResult> CerrarSesion()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Registrarse", "Usuarios");
+
+        }
+
+
         // POST: UsuariosController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]

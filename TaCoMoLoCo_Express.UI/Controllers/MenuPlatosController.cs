@@ -85,9 +85,15 @@ namespace TaCoMoLoCo_Express.UI.Controllers
                 carrito = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ProductoCarrito>>(carritoJson);
                 TempData["Carrito"] = carritoJson;
             }
-            Cupon cupon = ViewBag.Cupon;
+            var cuponJson = TempData["Cupon"] as string;
+            Cupon cupon = null;
+            if (!string.IsNullOrEmpty(cuponJson))
+            {
+                cupon = Newtonsoft.Json.JsonConvert.DeserializeObject<Cupon>(cuponJson);
+                TempData["Cupon"] = cuponJson; // Reasignar a TempData para mantenerlo para la próxima solicitud
+            }
             // Suponiendo que el descuento se guarda como un porcentaje en TempData["Descuento"]
-            var descuento = cupon.PorcentajeDescuento != null ? Convert.ToDecimal(cupon.PorcentajeDescuento) : 0;
+            var descuento = cupon != null ? Convert.ToDecimal(cupon.PorcentajeDescuento) : 0;
 
             // Calcular el subtotal
             var subtotal = carrito != null ? carrito.Sum(item => item.Precio * item.Cantidad) : 0;
@@ -208,12 +214,11 @@ namespace TaCoMoLoCo_Express.UI.Controllers
         {
           
             var cupon = ElAdministradorDeCupones.VerificarCupon(codigoCupon);
-            ViewBag.Cupon = cupon;
             if (cupon != null && cupon.FechaCaducidad >= DateTime.Now && cupon.UsosDisponibles > 0)
             {
                 TempData["CodigoDelCupon"] = codigoCupon;
-                
-                
+                TempData["Cupon"] = Newtonsoft.Json.JsonConvert.SerializeObject(cupon);
+
                 // Aquí puedes aplicar el descuento o simplemente devolver información del cupón.
                 return Json(new { success = true, mensaje = "Cupón válido.", descuento = cupon.PorcentajeDescuento });
 
