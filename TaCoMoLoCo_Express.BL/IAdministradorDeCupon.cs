@@ -12,7 +12,5 @@ namespace TaCoMoLoCo_Express.BL
 
         Cupon VerificarCupon(string codigoCupon);
 
-        void UsarCupon(string codigoCupon);
-
     }
 }
