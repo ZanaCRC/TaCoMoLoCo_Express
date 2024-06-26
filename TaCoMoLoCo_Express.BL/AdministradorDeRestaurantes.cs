@@ -102,9 +102,35 @@ namespace TaCoMoLoCo_Express.BL
                         throw new Exception("Error creating order");
                     }
                 }
-                _connection.Close();
+                _contexto.Database.CloseConnection();
             }
             
         }
+
+        public void CrearDetallePedido(DetallePedido dp)
+        {
+            using (var command = _contexto.Database.GetDbConnection().CreateCommand())
+            {
+                // Definir el comando para llamar al procedimiento almacenado
+                command.CommandText = "CALL public.insertar_detalle_pedido(@CodigoPedido, @IdPlato, @Unidades, @Precio);";
+
+                // Agregar los parámetros necesarios para el procedimiento almacenado
+                command.Parameters.Add(new NpgsqlParameter("@CodigoPedido", NpgsqlDbType.Integer) { Value = dp.CodigoPedido });
+                command.Parameters.Add(new NpgsqlParameter("@IdPlato", NpgsqlDbType.Integer) { Value = dp.IdPlato });
+                command.Parameters.Add(new NpgsqlParameter("@Unidades", NpgsqlDbType.Integer) { Value = dp.Unidades });
+                command.Parameters.Add(new NpgsqlParameter("@Precio", NpgsqlDbType.Numeric) { Value = dp.Precio });
+
+                // Abrir la conexión si está cerrada
+                if (command.Connection.State != System.Data.ConnectionState.Open)
+                {
+                    _contexto.Database.OpenConnection();
+                }
+
+                // Ejecutar el comando
+                command.ExecuteNonQuery();
+                _contexto.Database.CloseConnection();
+            }
+        }
+
     }
 }

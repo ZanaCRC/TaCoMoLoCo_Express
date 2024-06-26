@@ -1,8 +1,10 @@
 ﻿@model List<TaCoMoLoCo_Express.Model.ProductoCarrito>
 
 @{
-    Layout = null; // Si deseas usar un layout específico, cámbialo aquí.
-    var subtotal = Model.Sum(item => item.Precio * item.Cantidad);
+    Layout = null;
+    var subtotal = ViewBag.Subtotal;
+    var descuento = ViewBag.Descuento;
+    var total = ViewBag.Total;
 }
 
 <!DOCTYPE html>
@@ -63,9 +65,11 @@
                   
                 </div>
                 <div class="flex-grow flex flex-col justify-end pl-6 pr-6">
-                    <div class="flex justify-between items-center border-b-2 pb-2">
-                        <span>Total:</span>
-                        <span class="text-xl font-medium">₡<span id="total-price">@subtotal.ToString()</span></span>
+
+                    <p>Subtotal: ₡@subtotal.ToString("N2")</p>
+                    <p>Descuento: @descuento% - ₡@(subtotal * descuento / 100)</p>
+                    <p>Total: ₡@total.ToString("N2")</p> 
+                    
                     </div>
                     <div class="flex justify-center pt-4 font-bold">
                         <a href="@Url.Action("RealizarPago", "MenuPlatos")" class="bg-yellow-400 p-6 rounded-lg cursor-pointer flex items-center justify-center">

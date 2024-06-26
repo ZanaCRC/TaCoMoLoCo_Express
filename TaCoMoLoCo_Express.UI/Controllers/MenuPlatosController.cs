@@ -85,6 +85,20 @@ namespace TaCoMoLoCo_Express.UI.Controllers
                 carrito = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ProductoCarrito>>(carritoJson);
                 TempData["Carrito"] = carritoJson;
             }
+            Cupon cupon = ViewBag.Cupon;
+            // Suponiendo que el descuento se guarda como un porcentaje en TempData["Descuento"]
+            var descuento = cupon.PorcentajeDescuento != null ? Convert.ToDecimal(cupon.PorcentajeDescuento) : 0;
+
+            // Calcular el subtotal
+            var subtotal = carrito != null ? carrito.Sum(item => item.Precio * item.Cantidad) : 0;
+
+            // Calcular el total después del descuento
+            var total = subtotal - (subtotal * descuento / 100);
+
+            // Pasar los valores a la vista
+            ViewBag.Subtotal = subtotal;
+            ViewBag.Descuento = descuento;
+            ViewBag.Total = total;
 
             TempData["IdRest"] = carrito[0].IdRestaurante;
 
@@ -194,16 +208,18 @@ namespace TaCoMoLoCo_Express.UI.Controllers
         {
           
             var cupon = ElAdministradorDeCupones.VerificarCupon(codigoCupon);
+            ViewBag.Cupon = cupon;
             if (cupon != null && cupon.FechaCaducidad >= DateTime.Now && cupon.UsosDisponibles > 0)
             {
                 TempData["CodigoDelCupon"] = codigoCupon;
+                
+                
                 // Aquí puedes aplicar el descuento o simplemente devolver información del cupón.
                 return Json(new { success = true, mensaje = "Cupón válido.", descuento = cupon.PorcentajeDescuento });
 
             }
             else
             {
-                
                 TempData["IdCupon"] = "Null";
                 return Json(new { success = true, mensaje = "Cupón inválido o expirado." });
             }
