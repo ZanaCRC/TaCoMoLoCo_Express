@@ -34,7 +34,7 @@ namespace TaCoMoLoCo_Express.BL
             
                 new { Username = username }
             );
-
+            _connection.Close();
             return password;
         }
 
@@ -47,7 +47,7 @@ namespace TaCoMoLoCo_Express.BL
                            WHERE ""Cedula"" = @Cedula;",
                 new { Cedula = cedula }
             );
-
+            _connection.Close();
             return count > 0;
         }
 
@@ -61,7 +61,7 @@ namespace TaCoMoLoCo_Express.BL
                            WHERE ""Usuario"" = @Usuario;",
                 new { Usuario = usuario }
             );
-
+            _connection.Close();
             return count > 0;
         }
 
@@ -79,7 +79,7 @@ namespace TaCoMoLoCo_Express.BL
                 Apellido2 = apellido2,
                
                 IdRol = idRol
-            });
+            }); _connection.Close();
         }
 
         public void InsertarLogin( string cedula, string usuario, string contrasenia)
@@ -93,7 +93,7 @@ namespace TaCoMoLoCo_Express.BL
                 Cedula = cedula,
                 Usuario = usuario,
                 Contrasenia = contrasenia
-            });
+            }); _connection.Close();
         }
 
 
@@ -115,7 +115,7 @@ namespace TaCoMoLoCo_Express.BL
 
 
             return idRol;
-
+            
 
         }
 
@@ -199,7 +199,7 @@ CALL public.insertar_direccion_usuario(@CedulaUsuario, @IdProvincia, @IdCanton, 
                 });
                 _connection.Close();
             }
-
+            
             catch (Exception ex)
             {
                 Console.WriteLine($"Error al insertar dirección usuario: {ex.Message}");

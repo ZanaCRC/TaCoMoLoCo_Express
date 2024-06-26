@@ -53,6 +53,7 @@ WHERE p.""IdRestaurante"" = @IdRestaurante";
 
                 platosDelRestaurante.Add(plato);
             }
+            ElContexto.Close();
 
             return platosDelRestaurante;
         }
@@ -69,6 +70,7 @@ WHERE p.""IdRestaurante"" = @IdRestaurante";
                 @"SELECT * FROM ""Plato"" WHERE ""Id"" = @idPlato",
                 new { idPlato = id }
             );
+            ElContexto.Close();
 
             return plato;
         }

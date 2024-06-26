@@ -34,7 +34,10 @@ namespace TaCoMoLoCo_Express.BL
             var restaurantes = _contexto.Restaurante
                 .FromSqlRaw(consultaSQL, usuarioId)
                 .ToList();
-         
+
+            _connection.Close();
+
+
             return restaurantes;
         }
 
@@ -83,7 +86,9 @@ namespace TaCoMoLoCo_Express.BL
                         throw new Exception("Error creating order");
                     }
                 }
+                _connection.Close();
             }
+            
         }
     }
 }

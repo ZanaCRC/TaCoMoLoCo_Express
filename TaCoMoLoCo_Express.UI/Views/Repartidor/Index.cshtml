@@ -16,7 +16,8 @@
             <p>Cedula Cliente: @Html.DisplayFor(modelItem => item.CedulaCliente)</p>
             <p>Id Restaurante: @Html.DisplayFor(modelItem => item.IdRestaurante)</p>
             <p>Codigo Cupon: @Html.DisplayFor(modelItem => item.CodigoCupon)</p>
-            <p>Fecha de Pedido: @Html.DisplayFor(modelItem => item.FechaDePedido)</p>
+            <p>Fecha de Pedido: @item.FechaDePedido.ToString("yyyy-MM-dd")</p>
+
             <p>Importe Total: @Html.DisplayFor(modelItem => item.ImporteTotal)</p>
             <a asp-action="FinaliceElEnvio" asp-route-iDPedidoAFinalizar="@item.Codigo" class="btn btn-primary">Entregar pedido</a>
             <a asp-action="RechazarPedido" asp-route-iDPedidoAFinalizar="@item.Codigo" class="btn btn-primary">Rechazar pedido</a>
