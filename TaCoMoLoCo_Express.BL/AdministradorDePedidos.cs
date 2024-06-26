@@ -33,7 +33,7 @@ namespace TaCoMoLoCo_Express.BL
         {
             var repartidores = _connection.Query<Usuario>(
                 @"SELECT * FROM ""Usuario"" WHERE ""IdRol"" = @IdRol;",
-                new { IdRol = 6 }
+                new { IdRol = 3 }
             ).ToList();
             _connection.Close();
             return repartidores;
