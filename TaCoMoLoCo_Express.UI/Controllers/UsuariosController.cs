@@ -96,7 +96,7 @@ namespace TaCoMoLoCo_Express.UI.Controllers
 
                 else if (usuarioBuscado.IdRol == Model.EnumRol.Distribuidor)
                 {
-                    /*return RedirectToAction("Index", "Cliente");*/
+                    return RedirectToAction("Index", "Distribuidor");
                     ViewData["Mensaje"] = "Inicio de sesion correcto";
 
                 }
