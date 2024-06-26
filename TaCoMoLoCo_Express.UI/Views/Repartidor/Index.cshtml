@@ -20,7 +20,7 @@
 
             <p>Importe Total: @Html.DisplayFor(modelItem => item.ImporteTotal)</p>
             <a asp-action="FinaliceElEnvio" asp-route-iDPedidoAFinalizar="@item.Codigo" class="btn btn-primary">Entregar pedido</a>
-            <a asp-action="RechazarPedido" asp-route-iDPedidoAFinalizar="@item.Codigo" class="btn btn-primary">Rechazar pedido</a>
+            <a asp-action="RechazarPedido" asp-route-IDPedidoARechazar="@item.Codigo" class="btn btn-primary">Rechazar pedido</a>
         </div>
     }
 </div>
