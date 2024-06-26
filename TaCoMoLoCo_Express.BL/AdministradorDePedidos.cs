@@ -71,7 +71,41 @@ namespace TaCoMoLoCo_Express.BL
             _connection.Close();
         }
 
+        public List<Pedido> BusqueListaDePedidosPorAceptar(string cedulaRepartidor)
+        {
+            var pedidos = _connection.Query<Pedido>(
+                @"SELECT * FROM ""Pedido"" 
+          WHERE ""CedulaRepartidor"" = @CedulaRepartidor 
+          AND ""IdEstado"" = @Estado;",
+                new { CedulaRepartidor = cedulaRepartidor, Estado = 3 }
+            ).ToList();
+            _connection.Close();
+            return pedidos;
+        }
 
+
+        public void ActualiceEstadoDelPedido(int pedidoId, int nuevoEstado)
+        {
+            if (nuevoEstado == 4)
+            {
+                var sql = @"UPDATE ""Pedido""
+            SET ""IdEstado"" = @IdEstado,
+                ""FechaEntrega"" = @FechaEntrega
+            WHERE ""Codigo"" = @Id";
+
+                _connection.Execute(sql, new { IdEstado = nuevoEstado, FechaEntrega = DateTime.Now, Id = pedidoId });
+            }
+            else
+            {
+                var sql = @"UPDATE ""Pedido""
+            SET ""IdEstado"" = @IdEstado
+            WHERE ""Codigo"" = @Id";
+
+                _connection.Execute(sql, new { IdEstado = nuevoEstado, Id = pedidoId });
+            }
+
+            _connection.Close();
+        }
 
 
 

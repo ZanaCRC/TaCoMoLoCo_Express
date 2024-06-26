@@ -16,5 +16,8 @@ namespace TaCoMoLoCo_Express.BL
         public Usuario BusqueRepartidorPorCedula(string cedula);
         public Pedido BusquePedidoPorId(int codigo);
         public void ActualiceCedulaRepartidorYEstadoDelPedido(int pedidoId, string nuevaCedulaRepartidor);
+
+        public List<Pedido> BusqueListaDePedidosPorAceptar(string cedulaRepartidor);
+        public void ActualiceEstadoDelPedido(int pedidoId, int NuevoEstado);
     }
 }
