@@ -22,7 +22,7 @@ namespace TaCoMoLoCo_Express.Model
         public int IdRestaurante { get; set; }
         
         [ForeignKey("Cupon")]
-        public int? CodigoCupon { get; set; }
+        public string? CodigoCupon { get; set; }
 
         [ForeignKey("Estado")]
         public EnumEstadoPedido IdEstado { get; set; }

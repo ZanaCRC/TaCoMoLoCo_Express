@@ -35,7 +35,7 @@ namespace TaCoMoLoCo_Express.BL
                 .FromSqlRaw(consultaSQL, usuarioId)
                 .ToList();
 
-            _connection.Close();
+            
 
 
             return restaurantes;
@@ -69,7 +69,18 @@ namespace TaCoMoLoCo_Express.BL
 
                 command.Parameters.Add(new NpgsqlParameter("@CedulaCliente", NpgsqlDbType.Varchar) { Value = pedido.CedulaCliente });
                 command.Parameters.Add(new NpgsqlParameter("@IdRestaurante", NpgsqlDbType.Integer) { Value = pedido.IdRestaurante });
-                command.Parameters.Add(new NpgsqlParameter("@CodigoCupon", NpgsqlDbType.Varchar) { Value = "2" });
+                if (pedido.CodigoCupon == "estetelefonoparececarpinteroporquehacerin")
+                {
+                    command.Parameters.Add(new NpgsqlParameter("@CodigoCupon", NpgsqlDbType.Varchar) { Value = "0" });
+
+
+                }
+                else {
+                    command.Parameters.Add(new NpgsqlParameter("@CodigoCupon", NpgsqlDbType.Varchar) { Value = pedido.CodigoCupon});
+
+                }
+                
+
                 command.Parameters.Add(new NpgsqlParameter("@FechaPedido", NpgsqlDbType.Date) { Value = pedido.FechaDePedido.Date });
                 command.Parameters.Add(new NpgsqlParameter("@IdEstado", NpgsqlDbType.Integer) { Value = 1 });
                 command.Parameters.Add(new NpgsqlParameter("@ImporteTotal", NpgsqlDbType.Numeric) { Value = pedido.ImporteTotal });

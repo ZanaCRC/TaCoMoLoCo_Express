@@ -16,5 +16,8 @@ namespace TaCoMoLoCo_Express.Model
         [ForeignKey("Dia")]
         public int IdDia { get; set; }
         public Dia Dia { get; set; }
+
+        public DateTime HoraInicio { get; set; }
+        public DateTime HoraCierre { get; set; }
     }
 }

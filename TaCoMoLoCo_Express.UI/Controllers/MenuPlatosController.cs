@@ -23,6 +23,7 @@ namespace TaCoMoLoCo_Express.UI.Controllers
         // GET: MenuPlatosController
         public ActionResult Index()
         {
+            TempData["CodigoDelCupon"] = "estetelefonoparececarpinteroporquehacerin";
             List<PlatoVM> losPlatos = new List<PlatoVM>();
             List<Restaurante> restaurantesDisponiblesEnEsaDireccion;
             restaurantesDisponiblesEnEsaDireccion = ElAdministradorDeRestaurantes.ObtengaLaListaDeRestaurantes(User.Claims.FirstOrDefault(c => c.Type == "CedulaUsuario").Value.ToString());
@@ -105,11 +106,12 @@ namespace TaCoMoLoCo_Express.UI.Controllers
                 IdEstado = EnumEstadoPedido.REST,
                 IdRestaurante = Convert.ToInt32(TempData["IdRest"]),
                 CedulaCliente = User.Claims.FirstOrDefault(c => c.Type == "CedulaUsuario").Value.ToString(),
-                ImporteTotal = carritoXD.Sum(item => item.Precio * item.Cantidad)
-
+                ImporteTotal = carritoXD.Sum(item => item.Precio * item.Cantidad),
+               
 
             };
 
+            nuevoPedido.CodigoCupon = TempData["CodigoDelCupon"].ToString();
             var idPedido = ElAdministradorDeRestaurantes.CrearPedido(nuevoPedido);
             List<DetallePedido> detallesPedido = carritoXD.Select(item => new DetallePedido
             {
@@ -188,9 +190,11 @@ namespace TaCoMoLoCo_Express.UI.Controllers
         [HttpPost]
         public IActionResult VerificarCupon(string codigoCupon)
         {
+          
             var cupon = ElAdministradorDeCupones.VerificarCupon(codigoCupon);
             if (cupon != null && cupon.FechaCaducidad >= DateTime.Now && cupon.UsosDisponibles > 0)
             {
+                TempData["CodigoDelCupon"] = codigoCupon;
                 // Aquí puedes aplicar el descuento o simplemente devolver información del cupón.
                 return Json(new { success = true, mensaje = "Cupón válido.", descuento = cupon.PorcentajeDescuento });
             }
