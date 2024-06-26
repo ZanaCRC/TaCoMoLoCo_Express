@@ -21,13 +21,16 @@ namespace TaCoMoLoCo_Express.UI.Controllers
         }
 
         // GET: MenuPlatosController
-        public ActionResult Index()
+        public ActionResult Index(int? categoriaId)
         {
             TempData["CodigoDelCupon"] = "estetelefonoparececarpinteroporquehacerin";
             List<PlatoVM> losPlatos = new List<PlatoVM>();
             List<Restaurante> restaurantesDisponiblesEnEsaDireccion;
             restaurantesDisponiblesEnEsaDireccion = ElAdministradorDeRestaurantes.ObtengaLaListaDeRestaurantes(User.Claims.FirstOrDefault(c => c.Type == "CedulaUsuario").Value.ToString());
             ViewBag.Restaurantes = restaurantesDisponiblesEnEsaDireccion;
+            var categorias = ElAdministradorDeRestaurantes.ObtengaLasCategorias();
+            ViewBag.Categorias = categorias;
+
 
             foreach (var restaurante in restaurantesDisponiblesEnEsaDireccion)
             {
@@ -37,23 +40,29 @@ namespace TaCoMoLoCo_Express.UI.Controllers
                 List<PlatoVM> platosVM = new List<PlatoVM>();
                 foreach (var plato in platos)
                 {
-                    PlatoVM platoVM = new PlatoVM();
-                    platoVM.Id = plato.Id;
-                    platoVM.Nombre = plato.Nombre;
-                    platoVM.Precio = plato.Precio;
-                    platoVM.Descripcion = plato.Descripcion;
-                    platoVM.NombreCategoria = plato.Categoria.Nombre;
-                    platoVM.Image = plato.Image;
-                    platosVM.Add(platoVM);
+                    // Si se ha especificado una categoría, filtramos los platos por esa categoría
+                    if (!categoriaId.HasValue || plato.Categoria.Id == categoriaId)
+                    {
+                        PlatoVM platoVM = new PlatoVM();
+                        platoVM.Id = plato.Id;
+                        platoVM.Nombre = plato.Nombre;
+                        platoVM.Precio = plato.Precio;
+                        platoVM.Descripcion = plato.Descripcion;
+                        platoVM.NombreCategoria = plato.Categoria.Nombre;
+                        platoVM.Image = plato.Image;
+                        platosVM.Add(platoVM);
+                    }
                 }
 
                 losPlatos.AddRange(platosVM);
             }
 
+            // Pasamos el ID de la categoría seleccionada a la vista para mantener el estado del filtro
+            ViewBag.CategoriaIdSeleccionada = categoriaId;
 
             return View(losPlatos);
-
         }
+
 
         [HttpPost]
         public IActionResult ProcesarCarrito([FromBody] List<ProductoCarrito> carrito)
@@ -104,6 +113,7 @@ namespace TaCoMoLoCo_Express.UI.Controllers
             {
                 FechaDePedido = DateTime.Now,
                 IdEstado = EnumEstadoPedido.REST,
+                CodigoCupon = TempData["IdCupon"].ToString(),
                 IdRestaurante = Convert.ToInt32(TempData["IdRest"]),
                 CedulaCliente = User.Claims.FirstOrDefault(c => c.Type == "CedulaUsuario").Value.ToString(),
                 ImporteTotal = carritoXD.Sum(item => item.Precio * item.Cantidad),
@@ -116,35 +126,27 @@ namespace TaCoMoLoCo_Express.UI.Controllers
             List<DetallePedido> detallesPedido = carritoXD.Select(item => new DetallePedido
             {
                 IdPlato = item.Id,
+                CodigoPedido = idPedido,
                 Unidades = item.Cantidad,
                 Precio = item.Precio
             }).ToList();
 
-            // Guardar el pedido y los detalles del pedido
-            bool exito = GuardarPedido(nuevoPedido, detallesPedido);
-
-            if (!exito)
+            foreach (var detalle in detallesPedido)
             {
-                // Manejar el caso de fallo al guardar el pedido
-                return View("Error");
+                ElAdministradorDeRestaurantes.CrearDetallePedido(detalle);
             }
+
+            // Guardar el pedido y los detalles del pedido
 
             // Si todo fue exitoso, redirigir a una vista de confirmación del pedido
             return RedirectToAction("Index");
         }
 
         // Asegúrate de implementar este método según tu lógica de negocio
-        private bool GuardarPedido(Pedido pedido, List<DetallePedido> detallesPedido)
-        {
-            // Lógica para guardar el pedido y los detalles en la base de datos
-            return true;
-        }
+
         public IActionResult ObtenerPlato(int id)
         {
             Plato plato = ElAdministrador.ObtengaElPlato(id);
-
-
-
 
             PlatoVM platoVM = new PlatoVM();
             platoVM.Id = plato.Id;
@@ -197,10 +199,13 @@ namespace TaCoMoLoCo_Express.UI.Controllers
                 TempData["CodigoDelCupon"] = codigoCupon;
                 // Aquí puedes aplicar el descuento o simplemente devolver información del cupón.
                 return Json(new { success = true, mensaje = "Cupón válido.", descuento = cupon.PorcentajeDescuento });
+
             }
             else
             {
-                return Json(new { success = false, mensaje = "Cupón inválido o expirado." });
+                
+                TempData["IdCupon"] = "Null";
+                return Json(new { success = true, mensaje = "Cupón inválido o expirado." });
             }
         }
 

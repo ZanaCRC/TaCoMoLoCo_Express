@@ -13,6 +13,7 @@ namespace TaCoMoLoCo_Express.BL
 
         List<Plato> ObtengaLaListaDePlatosDeUnRestaurante(int idRestaurante);
         Plato ObtengaElPlato(int id);
-
+        
+        
     }
 }

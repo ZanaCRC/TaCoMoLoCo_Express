@@ -53,19 +53,24 @@ namespace TaCoMoLoCo_Express.BL
             return idBarrio;
         }
 
-        public int CrearPedido(Pedido pedido)
+        public List<Categoria> ObtengaLasCategorias()
         {
-            using (var command = _contexto.Database.GetDbConnection().CreateCommand())
+            return _contexto.Categoria.ToList();
+        }
+
+            public int CrearPedido(Pedido pedido)
             {
-                command.CommandText = @"
-            SELECT * FROM public.crearpedidonuevo(
-                @CedulaCliente::character varying, 
-                @IdRestaurante::integer,
-                @CodigoCupon::character varying,
-                @FechaPedido::date,
-                @IdEstado::integer,
-                @ImporteTotal::numeric
-            )";
+                using (var command = _contexto.Database.GetDbConnection().CreateCommand())
+                {
+                    command.CommandText = @"
+                SELECT * FROM public.crearpedidonuevo(
+                    @CedulaCliente::character varying, 
+                    @IdRestaurante::integer,
+                    @CodigoCupon::character varying,
+                    @FechaPedido::date,
+                    @IdEstado::integer,
+                    @ImporteTotal::numeric
+                )";
 
                 command.Parameters.Add(new NpgsqlParameter("@CedulaCliente", NpgsqlDbType.Varchar) { Value = pedido.CedulaCliente });
                 command.Parameters.Add(new NpgsqlParameter("@IdRestaurante", NpgsqlDbType.Integer) { Value = pedido.IdRestaurante });

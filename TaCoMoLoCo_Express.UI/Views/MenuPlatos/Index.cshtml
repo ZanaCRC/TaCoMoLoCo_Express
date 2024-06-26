@@ -87,6 +87,8 @@
             border-radius: 0 25px 0 0;
         }
     </style>
+
+
 </head>
 <body class="bg-gray-100 min-h-screen flex">
     <div class="flex flex-grow">
@@ -492,7 +494,12 @@
 
     
 </script>
-
+<script>
+    function filtrarPorCategoria() {
+        var categoriaId = document.getElementById('categoriaSelector').value;
+        window.location.href = `?categoriaId=${categoriaId}`;
+    }
+</script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {

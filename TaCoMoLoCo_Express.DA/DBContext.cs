@@ -29,6 +29,8 @@ namespace TaCoMoLoCo_Express.DA
 
         public DbSet<Cupon> Cupones { get; set; }
 
+        public DbSet<Categoria> Categoria { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Usuario>().ToTable("usuario");
