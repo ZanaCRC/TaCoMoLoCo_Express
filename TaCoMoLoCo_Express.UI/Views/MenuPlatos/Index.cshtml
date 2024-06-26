@@ -21,30 +21,16 @@
         .custom-rounded {
             border-radius: 25px;
         }
-       /* Estilo para el botón de eliminar */
-.grid-cols-4 > button {
-    padding: 0.5rem; /* Espaciado interno del botón */
-    border: none; /* Elimina el borde del botón si no es necesario */
-    cursor: pointer; /* Cambia el cursor al pasar por encima del botón */
-    outline: none; /* Elimina el contorno al enfocar el botón */
-}
 
-/* Estilo para el ícono dentro del botón */
-.grid-cols-4 > button i {
-    font-size: 0.75rem; /* Tamaño del ícono */
-}
-
-/* Estilo para el hover del botón */
-.grid-cols-4 > button:hover {
-    background-color: #e53e3e; /* Color de fondo cuando se pasa el mouse */
-}
-
-
-
-        [v-cloak] {
-            display: none;
+        /* Estilo para el ícono dentro del botón */
+        .nav-item > button i {
+            font-size: 0.75rem;
         }
 
+        /* Estilo para el hover del botón */
+        .nav-item > button:hover {
+            background-color: #e53e3e; /* Color de fondo cuando se pasa el mouse */
+        }
 
         .main {
             flex: 3;
@@ -61,20 +47,6 @@
             overflow-y: auto;
         }
 
-
-        #cart-items {
-            overflow-y: auto; /* Habilita el desplazamiento vertical si es necesario */
-            max-height: 280px; /* Establece una altura máxima */
-        }
-
-
-        .flex-grow.flex.flex-col.justify-end {
-            flex: 1; /* Hace que este contenedor llene el espacio restante */
-            display: flex;
-            flex-direction: column; /* Asegura que los elementos se apilen verticalmente */
-            
-        }
-
         .timer {
             background: rgba(217, 194, 105, .2);
         }
@@ -87,12 +59,28 @@
             border-radius: 0 25px 0 0;
         }
     </style>
-
-
 </head>
-<body class="bg-gray-100 min-h-screen flex">
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <!-- Barra de navegación -->
+    <nav class="bg-white shadow-md p-4 flex justify-between items-center">
+        <div class="flex items-center">
+            <i class="fas fa-utensils text-orange-600 text-2xl"></i>
+            <span class="font-bold text-lg ml-4">TaCoMoLoCo Express</span>
+        </div>
+        <div class="flex items-center space-x-6">
+          <form id="logoutForm" action="@Url.Action("CerrarSesion", "Usuarios")" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="bg-red-500 text-white rounded p-2 flex items-center space-x-2 hover:bg-red-600 transition duration-300 ease-in-out">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar Sesión</span>
+                </button>
+            </form>
+        </div>
+    </nav>
+
     <div class="flex flex-grow">
         <div class="main px-16 border-r border-gray-200 w-3/4 min-h-screen">
+            <!-- El contenido principal de la página irá aquí -->
             <div class="h-12 mt-8 flex items-center">
                 <i class="fa fa-bars cursor-pointer"></i>
                 <h6 class="font-bold text-lg mx-10">Lista de Platos</h6>
@@ -104,40 +92,30 @@
             <div class="grid grid-cols-3 bg-orange-100 mt-12 rounded-lg"></div>
             <div class="flex mt-12 items-end">
                 <h3 class="text-3xl font-bold text-orange-600 mb-4">Restaurantes</h3>
-               @{
-                   /*
-                    * <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/237/hamburger_1f354.png" class="mx-4 h-8 w-8" alt="">
-                    */
-               }
-                 
-        
             </div>
 
-
-          
-
-<div class="grid grid-cols-9 gap-6 mt-12">
-    @foreach (var rest in ViewBag.Restaurantes)
-    {
-        <div class="border rounded-lg p-4 flex flex-col items-center shadow-lg cursor-pointer transition duration-500 ease-in-out transform hover:-translate-y-1 hover:shadow-2xl"
-             data-restaurante-id="@rest.Id"
-             style="background: @(rest.Id == ViewBag.ActiveCategory ? "yellow" : "white")"
-             onclick="seleccionarRestaurante(@rest.Id)">
-            <div class="border rounded-full p-2 bg-white">
-                <img class="h-12 w-12" src="/Imagenes/Restaurant.png" alt="Restaurante">
+            <!-- Lista de restaurantes -->
+            <div class="grid grid-cols-9 gap-6 mt-12">
+                @foreach (var rest in ViewBag.Restaurantes)
+                {
+                    <div class="border rounded-lg p-4 flex flex-col items-center shadow-lg cursor-pointer transition duration-500 ease-in-out transform hover:-translate-y-1 hover:shadow-2xl"
+                         data-restaurante-id="@rest.Id"
+                         style="background: @(rest.Id == ViewBag.ActiveCategory ? "yellow" : "white")"
+                         onclick="seleccionarRestaurante(@rest.Id)">
+                        <div class="border rounded-full p-2 bg-white">
+                            <img class="h-12 w-12" src="/Imagenes/Restaurant.png" alt="Restaurante">
+                        </div>
+                        <p class="mt-3 mb-10 font-bold text-sm text-gray-700">@rest.Nombre</p>
+                    </div>
+                }
+                <button class="h-10 rounded-lg self-center hover:shadow-xl flex justify-center items-center bg-gray-100 p-3 ml-auto">
+                    <i class="fa fa-chevron-right"></i>
+                </button>
             </div>
-            <p class="mt-3 mb-10 font-bold text-sm text-gray-700">@rest.Nombre</p>
-        </div>
-    }
-    <button class="h-10 rounded-lg self-center hover:shadow-xl flex justify-center items-center bg-gray-100 p-3 ml-auto">
-        <i class="fa fa-chevron-right"></i>
-    </button>
-</div>
 
             <div class="mt-12 grid grid-cols-3 gap-10">
                 @foreach (var food in Model)
                 {
-                    // Verificar si food.Image no es nulo
                     if (food.Image != null && food.Image.Length > 0)
                     {
                         string imageBase64 = Convert.ToBase64String(food.Image);
@@ -163,7 +141,6 @@
                     else
                     {
                         <div class="flex flex-col">
-                            <!-- Placeholder o mensaje de imagen no disponible -->
                             <p class="mt-4 font-medium">@food.Nombre</p>
                             <div class="mt-2 flex items-center justify-between">
                                 <span class="text-gray-600 font-hairline text-xs mx-4">@food.NombreCategoria</span>
@@ -177,8 +154,6 @@
                     }
                 }
             </div>
-
-
         </div>
         <div class="bg-gray-200 sidebar flex flex-col min-h-screen w-1/4">
             <div class="px-6">
@@ -188,8 +163,6 @@
                 <div id="cart-items" class="mt-8 p-6 bg-white custom-rounded font-hairline text-xs">
                     <!-- Aquí se van a listar los items del carrito -->
                 </div>
-  
-
             </div>
             <div class="flex-grow flex flex-col justify-end pl-6 pr-6">
                 <div class="flex justify-between items-center border-b-2 pb-2">
@@ -200,8 +173,7 @@
                     <span>Subtotal:</span>
                     <span class="text-xl font-medium">₡<span id="subtotal-price">0.00</span></span>
                 </div>
-
-               <!-- Cupón Mejorado -->
+                <!-- Cupón Mejorado -->
                 <div class="mt-6 mb-4 relative">
                     <label for="coupon-code" class="block text-sm font-medium text-gray-700 mb-2">Código de cupón</label>
                     <div class="relative rounded-md shadow-sm">
@@ -215,21 +187,17 @@
                 </div>
 
 
-
-                <!-- Fin del diseño mejorado para el cupón -->
-                <div class="flex justify-end pt-4  font-bold">
-                    <div class="ml-auto bg-yellow-400 p-6 rounded-lg cursor-pointer flex items-center justify-center flex-grow" onclick="checkout()">
-                        Checkout <i class="ml-6 fa fa-arrow-right"></i>
-                    </div>
-                </div>
             </div>
-        </div>
-
+            <div class="px-6 mb-8">
+                <button class="w-full bg-green-500 text-white rounded p-2 font-medium hover:bg-green-700 transition duration-300">
+                    Realizar pedido
+                </button>
+            </div>
         </div>
     </div>
 </body>
-
 </html>
+
 <style>
     .form-input {
         background-color: #f7fafc;

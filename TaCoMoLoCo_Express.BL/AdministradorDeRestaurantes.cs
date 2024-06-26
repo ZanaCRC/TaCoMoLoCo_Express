@@ -86,7 +86,7 @@ namespace TaCoMoLoCo_Express.BL
                 }
                 
 
-                command.Parameters.Add(new NpgsqlParameter("@FechaPedido", NpgsqlDbType.Date) { Value = pedido.FechaDePedido.Date });
+                command.Parameters.Add(new NpgsqlParameter("@FechaPedido", NpgsqlDbType.Date) { Value = pedido.FechaPedido.Date });
                 command.Parameters.Add(new NpgsqlParameter("@IdEstado", NpgsqlDbType.Integer) { Value = 1 });
                 command.Parameters.Add(new NpgsqlParameter("@ImporteTotal", NpgsqlDbType.Numeric) { Value = pedido.ImporteTotal });
 

@@ -26,8 +26,10 @@ namespace TaCoMoLoCo_Express.Model
 
         [ForeignKey("Estado")]
         public EnumEstadoPedido IdEstado { get; set; }
-        public DateTime FechaDePedido { get; set; }
-        public DateTime FechaDeEntrega { get; set; }
+        [DataType(DataType.Date)]
+        public DateTime FechaPedido { get; set; }
+        [DataType(DataType.Date)]
+        public DateTime FechaEntrega { get; set; }
         public decimal ImporteTotal { get; set; }
 
     }

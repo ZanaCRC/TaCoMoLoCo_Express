@@ -131,7 +131,7 @@ namespace TaCoMoLoCo_Express.UI.Controllers
 
             Pedido nuevoPedido = new Pedido
             {
-                FechaDePedido = DateTime.Now,
+                FechaPedido = DateTime.Now,
                 IdEstado = EnumEstadoPedido.REST,
                 CodigoCupon = TempData["IdCupon"].ToString(),
                 IdRestaurante = Convert.ToInt32(TempData["IdRest"]),
