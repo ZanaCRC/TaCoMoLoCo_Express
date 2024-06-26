@@ -174,7 +174,7 @@ namespace TaCoMoLoCo_Express.UI.Controllers
         [HttpGet]
         public IActionResult ObtenerDistritos(int cantonId)
         {
-            var distritos = ElAdministrador.BuscarDistritosPorIdCanton(cantonId-1);   
+            var distritos = ElAdministrador.BuscarDistritosPorIdCanton(cantonId);   
 
             // Mapear los datos a objetos anónimos para evitar problemas de referencia circular
             var result = distritos.Select(d => new {

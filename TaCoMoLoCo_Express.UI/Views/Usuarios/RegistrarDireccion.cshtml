@@ -37,7 +37,9 @@
 
             <div class="form-group">
                 <label asp-for="IdBarrio" class="control-label"></label>
-                <input asp-for="IdBarrio" class="form-control" />
+                <select asp-for="IdBarrio" id="IdBarrio" class="form-control">
+                    <option value="">Seleccione Barrio</option>
+                </select>
                 <span asp-validation-for="IdBarrio" class="text-danger"></span>
             </div>
 
