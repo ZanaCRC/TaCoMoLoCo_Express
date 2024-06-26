@@ -3,62 +3,77 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TaCoMoLoCo Express</title>
+    <title> TaCoMoLoCo Express</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/TaCoMoLoCo_Express.UI.styles.css" asp-append-version="true" />
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <style>
-        .navbar-brand {
-            font-weight: bold;
-            font-size: 1.5rem;
+        body * {
+            font-family: 'Poppins', sans-serif;
         }
 
-        .navbar-nav .nav-item .nav-link {
-            font-size: 1rem;
+        .custom-rounded {
+            border-radius: 25px;
         }
 
-        .logout-button {
-            background-color: #f56565;
-            color: white;
-            border-radius: 5px;
-            padding: 8px 12px;
+        /* Estilo para el ícono dentro del botón */
+        .nav-item > button i {
+            font-size: 0.75rem;
+        }
+
+        /* Estilo para el hover del botón */
+        .nav-item > button:hover {
+            background-color: #e53e3e; /* Color de fondo cuando se pasa el mouse */
+        }
+
+        .main {
+            flex: 3;
+        }
+
+        .sidebar {
+            position: -webkit-sticky; /* Para soporte de Safari */
+            position: sticky;
+            top: 0; /* Ajusta esto según sea necesario, 0 para que se pegue al tope de la ventana */
+            flex: 1;
             display: flex;
-            align-items: center;
-            transition: background-color 0.3s;
+            flex-direction: column;
+            max-height: 100vh;
+            overflow-y: auto;
         }
 
-            .logout-button:hover {
-                background-color: #c53030;
-            }
+        .timer {
+            background: rgba(217, 194, 105, .2);
+        }
 
-            .logout-button i {
-                margin-right: 5px;
-            }
+        .text-xxs {
+            font-size: .9rem;
+        }
+
+        .custom-tr-rounded {
+            border-radius: 0 25px 0 0;
+        }
+
     </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">TaCoMoLoCo Express</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <!-- Aquí podrías agregar más elementos de menú si es necesario -->
-                    </ul>
-                    <form id="logoutForm" action="@Url.Action("CerrarSesion", "Usuarios")" method="post" class="d-inline">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="logout-button">
-                            <i class="fas fa-sign-out-alt"></i>
-                            <span>Cerrar Sesión</span>
-                        </button>
-                    </form>
-                </div>
+        <nav class="bg-white shadow-md p-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <i class="fas fa-utensils text-orange-600 text-2xl"></i>
+                <span class="font-bold text-lg ml-4">TaCoMoLoCo Express</span>
+            </div>
+            <div class="flex items-center space-x-6">
+                <form id="logoutForm" action="@Url.Action("CerrarSesion", "Usuarios")" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="bg-red-500 text-white rounded p-2 flex items-center space-x-2 hover:bg-red-600 transition duration-300 ease-in-out">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Cerrar Sesión</span>
+                    </button>
+                </form>
             </div>
         </nav>
     </header>
