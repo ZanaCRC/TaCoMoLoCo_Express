@@ -17,6 +17,11 @@ namespace TaCoMoLoCo_Express.BL
             _connection = connection;
         }
 
+        public void UsarCupon(string codigoCupon)
+        {
+            throw new NotImplementedException();
+        }
+
         public Cupon VerificarCupon(string codigoCupon)
         {
             Cupon cupon = null;
